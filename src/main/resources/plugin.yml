@@ -1,0 +1,4 @@
+name: SeeleServerAssist
+version: '${project.version}'
+main: net.mc42290.seeleserverassist.SeeleServerAssist
+api-version: 1.19
