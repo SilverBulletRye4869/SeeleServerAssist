@@ -16,22 +16,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class Util {
     public static final String PREFIX = "§1§l[§e§lSeele_42290§1§l]";
-    public static final ItemStack GUI_BG = createItem(Material.LIGHT_BLUE_STAINED_GLASS_PANE,"§r");
+    public static final ItemStack GUI_BG = createItem(Material.BLUE_STAINED_GLASS_PANE,"§r");
     public static final ItemStack NULL_BG = createItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE,"§r");
     private static final Logger log = SeeleServerAssist.getLog();
     private static final JavaPlugin plugin = SeeleServerAssist.getInstance();
 
     public static ItemStack createItem(Material m,String name){return createItem(m,name,null,0,null);}
     public static ItemStack createItem(Material m, String name, List<String> lore){return createItem(m,name,lore,0,null);}
-    public static ItemStack createItem(Material m, String name, List<String> lore, HashMap<Enchantment,Integer> ench){return createItem(m,name,lore,0,ench);}
+    public static ItemStack createItem(Material m, String name, List<String> lore, Map<Enchantment,Integer> ench){return createItem(m,name,lore,0,ench);}
     public static ItemStack createItem(Material m, String name, List<String> lore, int model){return createItem(m,name,lore,model,null);}
-    public static ItemStack createItem(Material m, String name, List<String> lore, int model,HashMap<Enchantment,Integer> ench){
+    public static ItemStack createItem(Material m, String name, List<String> lore, int model, Map<Enchantment,Integer> ench){
         ItemStack item = new ItemStack(m);
         ItemMeta itemMeta = item.getItemMeta();
         if(itemMeta!=null){
