@@ -10,8 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CheckMatch implements Listener {
 
-    private final MainSystem MAIN_SYSTEM;
-    public CheckMatch(JavaPlugin plugin, MainSystem system){
+    private final JobMainSystem MAIN_SYSTEM;
+    public CheckMatch(JavaPlugin plugin, JobMainSystem system){
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
         MAIN_SYSTEM = system;
     }
@@ -23,10 +23,10 @@ public class CheckMatch implements Listener {
         String item = p.getInventory().getItemInMainHand().getType().toString().toLowerCase();
         boolean jobMatch = true;
 
-        if(item.endsWith("_sword") && jobMatch)jobMatch =MAIN_SYSTEM.isJobMatch(p, MainSystem.JOB.SWORD);
-        else if(item.endsWith("_axe")&& jobMatch) jobMatch= MAIN_SYSTEM.isJobMatch(p, MainSystem.JOB.AXE);
-        //else if(item.endsWith("_pickaxe")&& jobMatch) jobMatch = MAIN_SYSTEM.isJobMatch(p, MainSystem.JOB.SHOVEL);
-        else if(item.endsWith("bow")&& jobMatch) jobMatch = MAIN_SYSTEM.isJobMatch(p, MainSystem.JOB.BOW);
+        if(item.endsWith("_sword") && jobMatch)jobMatch =MAIN_SYSTEM.isJobMatch(p, JobMainSystem.JOB.SWORD);
+        else if(item.endsWith("_axe")&& jobMatch) jobMatch= MAIN_SYSTEM.isJobMatch(p, JobMainSystem.JOB.AXE);
+        //else if(item.endsWith("_pickaxe")&& jobMatch) jobMatch = MAIN_SYSTEM.isJobMatch(p, JobMainSystem.JOB.SHOVEL);
+        else if(item.endsWith("bow")&& jobMatch) jobMatch = MAIN_SYSTEM.isJobMatch(p, JobMainSystem.JOB.BOW);
 
         if (!jobMatch)e.setDamage(Math.max(1,e.getDamage()*0.01));
 
