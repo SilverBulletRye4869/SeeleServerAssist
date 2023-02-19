@@ -27,7 +27,7 @@ public class Attack implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityAttack(EntityDamageByEntityEvent e){
         if(!e.getDamager().getType().equals(EntityType.PLAYER))return;
         Player p = (Player) e.getDamager();
