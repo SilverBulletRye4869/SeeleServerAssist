@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class Util {
-    public static final String PREFIX = "§1§l[§e§lSeele_42290§1§l]";
+    public static final String PREFIX = "§b§l[§f§lSeele_42290§b§l]";
     public static final ItemStack GUI_BG = createItem(Material.BLUE_STAINED_GLASS_PANE,"§r");
     public static final ItemStack NULL_BG = createItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE,"§r");
     private static final Logger log = SeeleServerAssist.getLog();
@@ -40,7 +40,7 @@ public class Util {
             itemMeta.setCustomModelData(model);
             item.setItemMeta(itemMeta);
         }
-        if(ench!=null)item.addEnchantments(ench);
+        if(ench!=null)item.addUnsafeEnchantments(ench);
         return item;
     }
 
