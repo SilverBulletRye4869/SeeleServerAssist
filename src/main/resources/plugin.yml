@@ -4,4 +4,5 @@ main: net.mc42290.seeleserverassist.SeeleServerAssist
 api-version: 1.19
 
 commands:
-  mc42290
+  mc42290:
+    usage: /mc42290 ...
