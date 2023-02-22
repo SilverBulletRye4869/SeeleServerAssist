@@ -1,6 +1,7 @@
 package net.mc42290.seeleserverassist;
 
 import net.mc42290.seeleserverassist.damageEdit.DamageCalc;
+import net.mc42290.seeleserverassist.job.JobCommand;
 import net.mc42290.seeleserverassist.job.JobMainSystem;
 import net.mc42290.seeleserverassist.spItem.Attack;
 import net.mc42290.seeleserverassist.spItem.ReciveDamage;
@@ -34,9 +35,9 @@ public final class SeeleServerAssist extends JavaPlugin {
         log = getLogger();
 
         new DamageCalc(this);
-        JOB_SYSTEM = new JobMainSystem(this);
+        JOB_SYSTEM = new JobMainSystem(this);new JobCommand(this);
         new Attack(this);new ReciveDamage(this);new RightClick(this);
-        new Command(this);
+        new AssistCommand(this);
     }
 
     public static JavaPlugin getInstance(){return plugin;}
