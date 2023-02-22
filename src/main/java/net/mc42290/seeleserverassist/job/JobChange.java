@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -20,8 +21,8 @@ import java.util.*;
 
 public class JobChange {
     private static final ItemStack GUI_BG = Util.createItem(Material.GRAY_STAINED_GLASS_PANE,"§r");
-    private static final ItemStack CONFIRM_BG = Util.createItem(Material.LIME_STAINED_GLASS_PANE,"§a§l確定", List.of("&c&k&laaa §c§l職業の変更は有料です &c&k&laaa"));
-    private static final ItemStack CANCEL_BG = Util.createItem(Material.LIME_STAINED_GLASS_PANE,"§v§lキャンセル");
+    private static final ItemStack CONFIRM_BG = Util.createItem(Material.LIME_STAINED_GLASS_PANE,"§a§l確定", List.of("§c§k§laaa §c§l職業の変更は有料です §c§k§laaa"));
+    private static final ItemStack CANCEL_BG = Util.createItem(Material.RED_STAINED_GLASS_PANE,"§v§lキャンセル");
 
     private final JavaPlugin plugin;
     private final Set<Player> openingChoiceMenu = new HashSet<>();
@@ -36,6 +37,7 @@ public class JobChange {
     }
 
     public void openChangeMenu(Player p){
+        p.closeInventory();
         Inventory inv = Bukkit.createInventory(p,9,Util.PREFIX+"§d§l職業選択画面");
         Util.invFill(inv,Util.GUI_BG);
         inv.setItem(1,Util.createItem(Material.DIAMOND_SWORD,"§b§lSWORD"));
@@ -45,25 +47,30 @@ public class JobChange {
         inv.setItem(5,Util.createItem(Material.STICK ,"§d§lLANCE",null,Map.of(Enchantment.DAMAGE_ALL,1)));
         inv.setItem(6,Util.createItem(Material.SLIME_BALL,"§a§lSCYTH"));
         inv.setItem(7,Util.createItem(Material.KNOWLEDGE_BOOK,"§e§lWIZARD"));
-
-        p.openInventory(inv);
+        openingChoiceMenu.add(p);
+        Bukkit.getScheduler().runTaskLater(plugin,()->p.openInventory(inv),1);
     }
 
     public void openConfirmMenu(Player p, JobMainSystem.JOB job){
+        p.closeInventory();
         Inventory inv = Bukkit.createInventory(p,27,"§a§l本当に§d§l"+job+"§a§lで確定しますか？");
         Util.invFill(inv);
-        for(int i = 0;i<3;i++)inv.setItem(10+i,CONFIRM_BG);
-        for(int i = 0;i<3;i++)inv.setItem(14+i,CANCEL_BG);
-        p.openInventory(inv);
+        for(int i = 0;i<3;i++)inv.setItem(10+i,CANCEL_BG);
+        for(int i = 0;i<3;i++)inv.setItem(14+i,CONFIRM_BG);
+        confirmMenu.put(p,job);
+        Bukkit.getScheduler().runTaskLater(plugin,()->p.openInventory(inv),1);
     }
 
     private class listener implements Listener {
-
+        private final Set<Player> DOUBLE_RUN_CHECK_SET = new HashSet<>();
 
         @EventHandler
         public void onTicketUse(PlayerInteractEvent e){
-            if(!(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)||e.getAction().equals(Action.RIGHT_CLICK_AIR)))return;
             Player p = e.getPlayer();
+            if(!(e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) || DOUBLE_RUN_CHECK_SET.contains(p))return;
+            DOUBLE_RUN_CHECK_SET.add(p);
+            Bukkit.getScheduler().runTaskLater(plugin,()->DOUBLE_RUN_CHECK_SET.remove(p),1);
+
             ItemStack item = p.getInventory().getItemInMainHand();
             NBTItem nbtItem = new NBTItem(item);
             if(!nbtItem.hasKey("jobchange"))return;
@@ -83,41 +90,55 @@ public class JobChange {
         public void onInvenotryClick(InventoryClickEvent e){
             Player p = (Player) e.getWhoClicked();
 
-            if(e.getCurrentItem() == null || !e.getClickedInventory().getType().equals(InventoryType.CHEST))return;
-            if(openingChoiceMenu.contains(p)){
-                int slot = e.getSlot();
-                if(slot<1 || slot>7)return;
-                JobMainSystem.JOB job = JobMainSystem.JOB.values()[slot-1];
-                confirmMenu.put(p,job);
-                openConfirmMenu(p,job);
+            do {
+                if(e.getCurrentItem() == null)return;
+                int slot = e.getClickedInventory().getType().equals(InventoryType.CHEST) ? e.getSlot() : -1;  //開いているインベントリじゃないときはクリック処理は無効化
+                if (openingChoiceMenu.contains(p)) {
+                    if (slot < 1 || slot > 7) break;
+                    JobMainSystem.JOB job = JobMainSystem.JOB.values()[slot - 1];
+                    p.closeInventory();
+                    openConfirmMenu(p, job);
 
-            }else if(confirmMenu.keySet().contains(p)){
-                int slot = e.getSlot();
+                } else if (confirmMenu.containsKey(p)) {
 
-                if(slot>9 && slot <13)openChangeMenu(p);
-                else if(slot >13 && slot<17){
-                    ItemStack item = p.getInventory().getItemInMainHand();
-                    NBTItem nbtItem = new NBTItem(item);
-                    int available = nbtItem.getInteger("jobchange");
+                    if (slot > 9 && slot < 13) openChangeMenu(p);
+                    else if (slot > 13 && slot < 17) {
+                        ItemStack item = p.getInventory().getItemInMainHand();
+                        if(item.getAmount() == 0)break;
+                        NBTItem nbtItem = new NBTItem(item);
+                        int available = nbtItem.getInteger("jobchange");
 
-                    if(!nbtItem.hasKey("jobchange") || available < 1 || item.getAmount() > 1){
-                        Util.sendPrefixMessage(p,"§c§lエラーが発生しました。");
-                        Util.sendPrefixMessage(p,"§c§l正しい職業変更券を1枚だけ持っているかを確認し、再度実行してください");
-                        p.closeInventory();
-                    }else{
-                        JobMainSystem.JOB job = confirmMenu.get(p);
-                        MAIN_SYSTEM.setJob(p,job);
-                        nbtItem.setInteger("jobchange",--available);
-                        if(available > 0) p.getInventory().setItemInMainHand(nbtItem.getItem());
-                        else p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                        Util.sendPrefixMessage(p,"§a§l正常に職業を§d§l"+job+"§a§lに変更しました");
+                        if (!nbtItem.hasKey("jobchange") || available < 1 || item.getAmount() > 1) {
+                            Util.sendPrefixMessage(p, "§c§lエラーが発生しました。");
+                            Util.sendPrefixMessage(p, "§c§l正しい職業変更券を1枚だけ持っているかを確認し、再度実行してください");
+                            p.closeInventory();
+                        } else {
+                            JobMainSystem.JOB job = confirmMenu.get(p);
+                            MAIN_SYSTEM.setJob(p, job);
+                            nbtItem.setInteger("jobchange", --available);
+                            if (available > 0) p.getInventory().setItemInMainHand(nbtItem.getItem());
+                            else p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                            Util.sendPrefixMessage(p, "§a§l正常に職業を§d§l" + job + "§a§lに変更しました");
+                            p.closeInventory();
+                        }
                     }
-                }
 
-            }else{
-                return;
-            }
+                } else {
+                    //無関係のGUIの時はスルー
+                    return;
+                }
+            }while(false);
+
             e.setCancelled(true);
         }
+
+        @EventHandler
+        public void onInventoryClose(InventoryCloseEvent e){
+            Player p = (Player) e.getPlayer();
+            openingChoiceMenu.remove(p);
+            confirmMenu.remove(p);
+        }
     }
+
+
 }
