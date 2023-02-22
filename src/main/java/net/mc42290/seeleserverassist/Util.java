@@ -1,6 +1,7 @@
 package net.mc42290.seeleserverassist;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class Util {
-    public static final String PREFIX = "§b§l[§f§lSeele_42290§b§l]";
+    public static final String PREFIX = ChatColor.of("#171b4a") +"§l[Seele_42290]";
     public static final ItemStack GUI_BG = createItem(Material.BLUE_STAINED_GLASS_PANE,"§r");
     public static final ItemStack NULL_BG = createItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE,"§r");
     private static final Logger log = SeeleServerAssist.getLog();
@@ -60,8 +61,8 @@ public class Util {
         return slotPlaces;
     }
 
-    public static void sendPrefixMessage(Player p, String msg){
-        p.sendMessage(PREFIX+"§r"+msg);
+    public static void sendPrefixMessage(Player p, String msg) {
+        p.sendMessage(PREFIX + "§r" + msg);
     }
 
     public enum MessageType{INFO,WARNING,ERROR}
