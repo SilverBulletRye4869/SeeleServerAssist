@@ -25,7 +25,7 @@ public class RightClick implements Listener {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onAction(PlayerInteractEvent e){
         Player p = e.getPlayer();
         Location loc;

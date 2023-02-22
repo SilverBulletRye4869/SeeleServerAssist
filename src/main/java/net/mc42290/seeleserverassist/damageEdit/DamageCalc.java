@@ -41,7 +41,7 @@ public class DamageCalc implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent e){
         //プレイヤーの時だけ実行
         Entity victim = e.getEntity();
@@ -61,6 +61,7 @@ public class DamageCalc implements Listener {
         damage *= rand * (1 -  ShieldDamage) * enchantCalc(p,e.getCause());  //防具値とエンチャントで軽減
         //ノックバック量（ノックバック耐性, 防具強度で軽減できる）
         double knockback = -0.7 * rand * (1-armor[2]/60*0.9);
+
 
         if(p.getHealth() - damage> 0){
             p.setHealth(p.getHealth() - damage);

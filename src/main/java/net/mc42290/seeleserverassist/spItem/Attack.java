@@ -27,7 +27,7 @@ public class Attack implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityAttack(EntityDamageByEntityEvent e){
         if(!e.getDamager().getType().equals(EntityType.PLAYER))return;
         Player p = (Player) e.getDamager();
@@ -79,10 +79,10 @@ public class Attack implements Listener {
 
         }
 
-        switch (nbtH = getNBT("adwe",e.getDamager(),EquipmentSlot.OFF_HAND)){
+        switch (nbtH = getNBT("adwe",e.getDamager(),EquipmentSlot.HEAD)){
             case 6:
             case 7:
-                double hp = ((LivingEntity) victim).getHealth();
+                double hp = Math.max(((LivingEntity) victim).getHealth() - e.getFinalDamage(),0);
                 double hp_max = ((LivingEntity) victim).getMaxHealth();
                 String msg ="§7§lHP: §a§l"+( nbtH == 6 ? ( (int)((hp/hp_max)*100)+"%" ) : ( hp+"§7§l/"+hp_max ));
                 Util.sendActionBar(p,msg);
