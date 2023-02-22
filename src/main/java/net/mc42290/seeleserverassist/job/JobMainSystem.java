@@ -1,6 +1,7 @@
 package net.mc42290.seeleserverassist.job;
 
 import net.mc42290.seeleserverassist.CustomConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,21 +17,28 @@ import java.util.UUID;
 
 public class JobMainSystem {
     private final JobChange JOB_CHANGE_SYSTEM;
+    private final JavaPlugin plugin;
 
     public JobMainSystem(JavaPlugin plugin){
+        this.plugin = plugin;
+
         plugin.getServer().getPluginManager().registerEvents(new listener(),plugin);
+        Bukkit.getOnlinePlayers().forEach(JobMainSystem.this::playerJobRegisterOnMemory);
+
         JOB_CHANGE_SYSTEM = new JobChange(plugin,this);
+
+        new CheckMatch(plugin,this);
     }
 
 
     private final HashMap<UUID, Integer> PLAYER_JOB = new HashMap<>();
 
 
-    public boolean isJobMatch(Player p, JOB job){
-        String jobNumBi = Integer.toBinaryString(PLAYER_JOB.get(p.getUniqueId().toString()));
-        int num = job.getNum();
-        if(jobNumBi.length() < num)return false;
-        return jobNumBi.charAt(jobNumBi.length() - num) == '1';
+    public boolean isJobMatch(Player p,JOB job){return isJobMatch(p,job.getNum());}
+    public boolean isJobMatch(Player p, int jobNum){
+        String jobNumBi = Integer.toBinaryString(PLAYER_JOB.get(p.getUniqueId()));
+        if(jobNumBi.length() < jobNum)return false;
+        return jobNumBi.charAt(jobNumBi.length() - jobNum) == '1';
     }
 
     public void setJob(OfflinePlayer p,JOB job){setJob(p,new JOB[]{job});}
@@ -74,25 +82,28 @@ public class JobMainSystem {
         public int getNum(){return jobNum;}
     }
 
+    public void playerJobRegisterOnMemory(Player p){
+        UUID uuid =p.getUniqueId();
+        String uuidStr = uuid.toString();
+        int playerJob = 1;
+        if(CustomConfig.existYml(uuidStr))playerJob = CustomConfig.getYmlByID(uuidStr).getInt("job");
+        else{
+            CustomConfig.createYmlByID(uuidStr);
+            CustomConfig.getYmlByID(uuidStr).set("job",1);
+            CustomConfig.saveYmlByID(uuidStr);
+        }
+        PLAYER_JOB.put(uuid,playerJob);
+    }
+
 
     private class listener implements Listener {
         @EventHandler
-        public void onJoin(PlayerJoinEvent e){
-            UUID uuid = e.getPlayer().getUniqueId();
-            String uuidStr = uuid.toString();
-            int playerJob = 1;
-            if(CustomConfig.existYml(uuidStr))playerJob = CustomConfig.getYmlByID(uuidStr).getInt("job");
-            else{
-                CustomConfig.createYmlByID(uuidStr);
-                CustomConfig.getYmlByID(uuidStr).set("job",1);
-                CustomConfig.saveYmlByID(uuidStr);
-            }
-            PLAYER_JOB.put(uuid,playerJob);
-        }
+        public void onJoin(PlayerJoinEvent e){playerJobRegisterOnMemory(e.getPlayer());}
 
         @EventHandler
         public void onQuit(PlayerQuitEvent e){
             PLAYER_JOB.remove(e.getPlayer().getUniqueId().toString());
         }
+
     }
 }
