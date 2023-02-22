@@ -1,10 +1,12 @@
 package net.mc42290.seeleserverassist.job;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -20,15 +22,16 @@ public class CheckMatch implements Listener {
     public void onAttack(EntityDamageByEntityEvent e){
         if(!(e.getDamager() instanceof Player))return;
         Player p = (Player) e.getDamager();
-        String item = p.getInventory().getItemInMainHand().getType().toString().toLowerCase();
         boolean jobMatch = true;
+        do {
+            ItemStack item = p.getInventory().getItemInMainHand();
+            if(item.getAmount() == 0)break;
+            NBTItem nbtItem = new NBTItem(item);
+            if(!nbtItem.hasKey("job"))break;
+            int jobNum = nbtItem.getInteger("job");
+            jobMatch = MAIN_SYSTEM.isJobMatch(p,jobNum);
 
-        if(item.endsWith("_sword") && jobMatch)jobMatch =MAIN_SYSTEM.isJobMatch(p, JobMainSystem.JOB.SWORD);
-        else if(item.endsWith("_axe")&& jobMatch) jobMatch= MAIN_SYSTEM.isJobMatch(p, JobMainSystem.JOB.AXE);
-        //else if(item.endsWith("_pickaxe")&& jobMatch) jobMatch = MAIN_SYSTEM.isJobMatch(p, JobMainSystem.JOB.SHOVEL);
-        else if(item.endsWith("bow")&& jobMatch) jobMatch = MAIN_SYSTEM.isJobMatch(p, JobMainSystem.JOB.BOW);
-
-        if (!jobMatch)e.setDamage(Math.max(1,e.getDamage()*0.01));
-
+        }while (false);
+        if (!jobMatch)e.setDamage(Math.max(0.1*p.getAttackCooldown(),e.getDamage()*0.01));
     }
 }
