@@ -57,11 +57,6 @@ public class Attack implements Listener {
             case 8:
                 p.setHealth(e.getDamage() * 0.3 + p.getHealth());
                 break;
-            case 12:
-                double reach = getNBT("reach",e.getDamager(),EquipmentSlot.HAND);
-                double distance = p.getLocation().distance(victim.getLocation());
-                if(distance>reach)e.setCancelled(true);
-                break;
             case 13:
                 loc = p.getLocation();
                 for(int i = -1;i<2;i++){
@@ -84,7 +79,8 @@ public class Attack implements Listener {
             case 7:
                 double hp = Math.max(((LivingEntity) victim).getHealth() - e.getFinalDamage(),0);
                 double hp_max = ((LivingEntity) victim).getMaxHealth();
-                String msg ="§7§lHP: §a§l"+( nbtH == 6 ? ( (int)((hp/hp_max)*100)+"%" ) : ( hp+"§7§l/"+hp_max ));
+
+                String msg ="§7§lHP: §a§l"+( nbtH == 6 ? ( (int)((hp/hp_max)*100)+"%" ) : String.format("%.2f§7§l/%.2f",hp,hp_max));
                 Util.sendActionBar(p,msg);
         }
 
