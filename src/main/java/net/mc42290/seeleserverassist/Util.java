@@ -105,12 +105,17 @@ public class Util {
     }
 
     public static int getNBT(String key, Entity e, EquipmentSlot type){
-        if(e.getType() != EntityType.PLAYER)return 0;
-        Player p = (Player) e;
-        ItemStack item = p.getInventory().getItem(type);
-        if(item == null || item.getType()== Material.AIR) return 0;
-        return new NBTItem(item).getInteger(key);
+        return (int)getNBT_lf(key,e,type,-1);
     }
+
+    public static double getNBT_lf(String key, Entity e,EquipmentSlot type, double defaultNum){
+        ItemStack item = ((LivingEntity)e).getEquipment().getItem(type);
+        if(item == null || item.getType()== Material.AIR) return defaultNum;
+        NBTItem nbtItem = new NBTItem(item);
+        if(nbtItem.hasKey(key))return nbtItem.getDouble(key);
+        else return defaultNum;
+    }
+
 
     public static boolean ChanceOf(double chance){
         double r = Math.random() * 100;
