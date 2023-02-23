@@ -72,6 +72,7 @@ public class JobChange {
             Bukkit.getScheduler().runTaskLater(plugin,()->DOUBLE_RUN_CHECK_SET.remove(p),1);
 
             ItemStack item = p.getInventory().getItemInMainHand();
+            if(item.getAmount()==0)return;
             NBTItem nbtItem = new NBTItem(item);
             if(!nbtItem.hasKey("jobchange"))return;
             int availableNum = nbtItem.getInteger("jobchange");
