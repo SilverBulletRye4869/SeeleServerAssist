@@ -4,6 +4,7 @@ import net.mc42290.seeleserverassist.damageEdit.DamageCalc;
 import net.mc42290.seeleserverassist.job.JobCommand;
 import net.mc42290.seeleserverassist.job.JobMainSystem;
 import net.mc42290.seeleserverassist.spItem.Attack;
+import net.mc42290.seeleserverassist.spItem.LeftClick;
 import net.mc42290.seeleserverassist.spItem.ReciveDamage;
 import net.mc42290.seeleserverassist.spItem.RightClick;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,7 +37,7 @@ public final class SeeleServerAssist extends JavaPlugin {
 
         new DamageCalc(this);
         JOB_SYSTEM = new JobMainSystem(this);new JobCommand(this);
-        new Attack(this);new ReciveDamage(this);new RightClick(this);
+        new Attack(this);new ReciveDamage(this);new RightClick(this);new LeftClick(this);
         new AssistCommand(this);
     }
 
