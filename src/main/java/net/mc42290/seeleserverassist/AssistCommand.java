@@ -49,6 +49,15 @@ public class AssistCommand implements CommandExecutor {
                 Util.sendPrefixMessage(p,"§a§l手に持ってるアイテムにnbt§d§l{ "+args[1]+" : "+args[2]+" }§a§lを適用しました");
                 break;
 
+            case "removenbt":
+                if(!sender.hasPermission("mc42290.admin"))return true;
+                if(item.getAmount() == 0 || args.length < 2 )return true;
+                p.getInventory().setItemInMainHand(new NBTItem(item){{
+                    removeKey(args[1]);
+                }}.getItem());
+                Util.sendPrefixMessage(p,"§a§l手に持っているアイテムのnbt§d§l"+args[1]+"§a§lを除去しました");
+                break;
+
             case "getmodel":
                 ItemMeta meta = item.getItemMeta();
                 if(!sender.hasPermission("mc42290.admin") || meta==null)return true;
@@ -72,7 +81,7 @@ public class AssistCommand implements CommandExecutor {
             Player p = (Player) sender;
             switch (args.length){
                 case 1:
-                    if(sender.hasPermission("mc42290.admin"))return List.of("getnbt","setnbt","getmodel","setmodel");
+                    if(sender.hasPermission("mc42290.admin"))return List.of("getnbt","setnbt","getmodel","setmodel","removenbt");
                     break;
                 case 2:
                     switch (args[0]){
