@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -119,5 +120,13 @@ public class Util {
 
     public static Location LocationCPY(Location loc){
         return new Location(loc.getWorld(),loc.getX(),loc.getY(),loc.getZ(),loc.getYaw(),loc.getPitch());
+    }
+
+    //e1から見たe2の相対位置角度（極座標θ部分）を取得
+    public static double getRelativeAngle(Entity e1, Entity e2){
+        Location e1loc = e1.getLocation();
+        Location e2loc = e2.getLocation();
+        double theta = Math.abs(-Math.atan2(e2loc.getX() - e1loc.getX(),e2loc.getZ() - e1loc.getZ()) - e1loc.getYaw() / 180*Math.PI);
+        return Math.min(2*Math.PI-theta,theta);
     }
 }
