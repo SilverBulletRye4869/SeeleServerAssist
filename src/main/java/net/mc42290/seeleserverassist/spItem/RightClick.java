@@ -4,6 +4,7 @@ import net.mc42290.seeleserverassist.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +41,13 @@ public class RightClick implements Listener {
             case 11:
                 if(cooltime.contains("bom_magic_"+p)) Util.sendPrefixMessage(p,"§cクールダウン中！");
                 else{
-                    if ((loc = (nbtM == 10 ? p.getLocation().add(0, 1, 0) : p.getTargetBlockExact(100).getLocation())) == null)break;
+
+                    if(nbtM==10)loc=p.getLocation().add(0, 1, 0);
+                    else{
+                        Block block = p.getTargetBlockExact(100);
+                        if(block==null)break;
+                        loc = block.getLocation();
+                    }
 
                     loc.getWorld().getNearbyEntities(loc, 4, 4, 4).stream().filter(g -> g instanceof Monster).forEach(entity -> ((Monster) entity).damage(20));
 
