@@ -20,8 +20,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JobCommand implements CommandExecutor {
-    public JobCommand(JavaPlugin plugin){
+    private final JobMainSystem JOB_MAIN_SYSTEM;
+
+    public JobCommand(JavaPlugin plugin,JobMainSystem jobMainSystem){
         PluginCommand command = plugin.getCommand("mc42290.job");
+        this.JOB_MAIN_SYSTEM = jobMainSystem;
         if(command==null){
             Util.sendConsole("commandの登録に失敗しました", Util.MessageType.ERROR);
             return;
@@ -71,10 +74,19 @@ public class JobCommand implements CommandExecutor {
                     Util.sendPrefixMessage(p,"§c§l職業を正しく入力してください");
                     return true;
                 }
-                SeeleServerAssist.getJobSystem().setJob(target,job);
+                JOB_MAIN_SYSTEM.setJob(target,job);
                 Util.sendPrefixMessage(p,"§d§l"+target.getName()+"§aの職業を§d§l"+job+"§a§lに変更しました");
 
                 break;
+
+            case "removejob":
+                if(!sender.hasPermission("mc42290.admin.job") || args.length < 2)return true;
+                target = Bukkit.getPlayer(args[1]);
+                if(target == null){
+                    Util.sendPrefixMessage(p,"§c対象のプレイヤーが見つかりませんでした");
+                    return true;
+                }
+                SeeleServerAssist.getJobSystem().setJob(target,0);
 
             case "getjob":
                 if(!sender.hasPermission("mc42290.admin.job"))return true;
@@ -82,7 +94,7 @@ public class JobCommand implements CommandExecutor {
             case "check":
                 if(target == null)target=p;
                 Util.sendPrefixMessage(p,"§d§l"+target.getName()+"§a§lの職業は次の通りです");
-                Util.sendPrefixMessage(p,SeeleServerAssist.getJobSystem().getJob(target).toString());
+                Util.sendPrefixMessage(p,JOB_MAIN_SYSTEM.getJob(target).toString());
                 break;
 
         }
@@ -95,12 +107,13 @@ public class JobCommand implements CommandExecutor {
         public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
             switch (args.length){
                 case 1:
-                    if(sender.hasPermission("mc42290.admin.job"))return List.of("getticket","setjob","getjob","check");
+                    if(sender.hasPermission("mc42290.admin.job"))return List.of("getticket","setjob","getjob","check","removejob");
                     else return List.of("check");
                 case 2:
                     switch (args[0]){
                         case "setjob":
                         case "getjob":
+                        case "removejob":
                             if(sender.hasPermission("mc42290.admin.job"))
                             return Arrays.asList(Bukkit.getOfflinePlayers()).stream()
                                     .filter(g->g.getName().matches("^"+args[1]+".*$"))
@@ -118,8 +131,9 @@ public class JobCommand implements CommandExecutor {
                                     .collect(Collectors.toList());
                     }
                     break;
+
             }
-            return null;
+            return List.of("");
         }
     }
 }
