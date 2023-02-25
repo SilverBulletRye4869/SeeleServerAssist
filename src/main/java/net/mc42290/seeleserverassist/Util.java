@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class Util {
-    public static final String PREFIX = ChatColor.of("#171b4a") +"§l[Seele_42290]";
+    public static final String PREFIX = "§e§l[Seele_42290]";
     public static final ItemStack GUI_BG = createItem(Material.BLUE_STAINED_GLASS_PANE,"§r");
     public static final ItemStack NULL_BG = createItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE,"§r");
     private static final Logger log = SeeleServerAssist.getLog();

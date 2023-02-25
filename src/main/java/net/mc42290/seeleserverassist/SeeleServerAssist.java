@@ -36,7 +36,8 @@ public final class SeeleServerAssist extends JavaPlugin {
         log = getLogger();
 
         new DamageCalc(this);
-        JOB_SYSTEM = new JobMainSystem(this);new JobCommand(this);
+        JOB_SYSTEM = new JobMainSystem(this);
+        new JobCommand(this,JOB_SYSTEM);
         new Attack(this);new ReciveDamage(this);new RightClick(this);new LeftClick(this);
         new AssistCommand(this);
     }
