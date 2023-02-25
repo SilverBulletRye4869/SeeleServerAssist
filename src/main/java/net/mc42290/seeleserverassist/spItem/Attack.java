@@ -55,7 +55,7 @@ public class Attack implements Listener {
                 }, 13/*0.65秒後*/);
                 break;
             case 8:
-                p.setHealth(e.getDamage() * 0.3 + p.getHealth());
+                p.setHealth(e.getFinalDamage() * 0.3 + p.getHealth());
                 break;
             case 13:
                 loc = p.getLocation();
