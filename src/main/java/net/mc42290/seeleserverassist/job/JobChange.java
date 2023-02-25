@@ -4,7 +4,8 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.mc42290.seeleserverassist.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,12 +41,12 @@ public class JobChange {
         p.closeInventory();
         Inventory inv = Bukkit.createInventory(p,9,Util.PREFIX+"§d§l職業選択画面");
         Util.invFill(inv,Util.GUI_BG);
-        inv.setItem(1,Util.createItem(Material.DIAMOND_SWORD,"§b§lSWORD"));
-        inv.setItem(2,Util.createItem(Material.NETHERITE_AXE, "§5§lAXE"));
-        inv.setItem(3,Util.createItem(Material.GOLDEN_SHOVEL,"§6§lSHOVEL"));
+        inv.setItem(1,Util.createItem(Material.IRON_SWORD,"§b§lSWORD",null,11));
+        inv.setItem(2,Util.createItem(Material.IRON_AXE, "§5§lAXE",null,1));
+        inv.setItem(3,Util.createItem(Material.SHIELD,"§6§lSHIELD",null,6));
         inv.setItem(4,Util.createItem(Material.BOW,"§c§lBOW"));
-        inv.setItem(5,Util.createItem(Material.STICK ,"§d§lLANCE",null,Map.of(Enchantment.DAMAGE_ALL,1)));
-        inv.setItem(6,Util.createItem(Material.SLIME_BALL,"§a§lSCYTH"));
+        inv.setItem(5,Util.createItem(Material.IRON_SHOVEL ,"§d§lLANCE",null,1));
+        inv.setItem(6,Util.createItem(Material.IRON_HOE,"§a§lSCYTH"));
         inv.setItem(7,Util.createItem(Material.KNOWLEDGE_BOOK,"§e§lWIZARD"));
         openingChoiceMenu.add(p);
         Bukkit.getScheduler().runTaskLater(plugin,()->p.openInventory(inv),1);
@@ -75,6 +76,8 @@ public class JobChange {
             if(item.getAmount()==0)return;
             NBTItem nbtItem = new NBTItem(item);
             if(!nbtItem.hasKey("jobchange"))return;
+            Block targetBlock = p.getTargetBlockExact(10);
+            if(targetBlock!=null && targetBlock.getState() instanceof Container)return;
             int availableNum = nbtItem.getInteger("jobchange");
             if(availableNum < 1) {
                 Util.sendPrefixMessage(p,"§c§lこのチケットは無効です。");
