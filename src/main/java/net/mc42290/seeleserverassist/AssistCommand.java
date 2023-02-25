@@ -97,7 +97,7 @@ public class AssistCommand implements CommandExecutor {
                     }
 
             }
-            return null;
+            return List.of("");
         }
     }
 }
