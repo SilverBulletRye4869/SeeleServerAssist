@@ -33,5 +33,6 @@ public class CheckMatch implements Listener {
 
         }while (false);
         if (!jobMatch)e.setDamage(Math.max(0.1*p.getAttackCooldown(),e.getDamage()*0.01));
+        if(MAIN_SYSTEM.isNeet.test(p))e.setDamage(e.getDamage()/(Math.random()*8.0+2));
     }
 }

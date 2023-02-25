@@ -14,10 +14,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class JobMainSystem {
     private final JobChange JOB_CHANGE_SYSTEM;
     private final JavaPlugin plugin;
+
+    public final Predicate<Player> isNeet = p -> isJobMatch(p,JOB.NEET);
 
     public JobMainSystem(JavaPlugin plugin){
         this.plugin = plugin;
@@ -40,6 +43,7 @@ public class JobMainSystem {
         if(jobNumBi.length() < jobNum)return false;
         return jobNumBi.charAt(jobNumBi.length() - jobNum) == '1';
     }
+
 
     public void setJob(OfflinePlayer p,JOB job){setJob(p,new JOB[]{job});}
     public void setJob(OfflinePlayer p,JOB ...jobs ){
@@ -69,11 +73,12 @@ public class JobMainSystem {
     public enum JOB{
         SWORD(1),
         AXE(2),
-        SHOVEL(3),
+        SHIELD(3),
         BOW(4),
         LANCE(5),
         SCYTH(6),
-        WIZARD(7);
+        WIZARD(7),
+        NEET(8);
 
         private final int jobNum;
         JOB(int num){
@@ -89,7 +94,7 @@ public class JobMainSystem {
         if(CustomConfig.existYml(uuidStr))playerJob = CustomConfig.getYmlByID(uuidStr).getInt("job");
         else{
             CustomConfig.createYmlByID(uuidStr);
-            CustomConfig.getYmlByID(uuidStr).set("job",1);
+            CustomConfig.getYmlByID(uuidStr).set("job",128);
             CustomConfig.saveYmlByID(uuidStr);
         }
         PLAYER_JOB.put(uuid,playerJob);
