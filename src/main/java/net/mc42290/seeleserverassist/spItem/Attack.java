@@ -57,6 +57,9 @@ public class Attack implements Listener {
             case 8:
                 p.setHealth(e.getFinalDamage() * 0.3 + p.getHealth());
                 break;
+            case 12:
+                if(p.getLocation().distance(victim.getLocation()) > Util.getNBT_lf("reach",p,EquipmentSlot.HAND,4.0))e.setCancelled(true);
+                break;
             case 13:
                 loc = p.getLocation();
                 for(int i = -1;i<2;i++){
@@ -77,6 +80,7 @@ public class Attack implements Listener {
         switch (nbtH = getNBT("adwe",e.getDamager(),EquipmentSlot.HEAD)){
             case 6:
             case 7:
+                if(e.isCancelled())return;
                 double hp = Math.max(((LivingEntity) victim).getHealth() - e.getFinalDamage(),0);
                 double hp_max = ((LivingEntity) victim).getMaxHealth();
 
