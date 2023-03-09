@@ -3,6 +3,7 @@ package net.mc42290.seeleserverassist.job;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.mc42290.seeleserverassist.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
@@ -76,8 +77,6 @@ public class JobChange {
             if(item.getAmount()==0)return;
             NBTItem nbtItem = new NBTItem(item);
             if(!nbtItem.hasKey("jobchange"))return;
-            Block targetBlock = p.getTargetBlockExact(10);
-            if(targetBlock!=null && targetBlock.getState() instanceof Container)return;
             int availableNum = nbtItem.getInteger("jobchange");
             if(availableNum < 1) {
                 Util.sendPrefixMessage(p,"§c§lこのチケットは無効です。");
@@ -87,7 +86,10 @@ public class JobChange {
                 Util.sendPrefixMessage(p,"§c§lスタックした状態での使用はできません");
                 return;
             }
-            openChangeMenu(p);
+            Bukkit.getScheduler().runTaskLater(plugin,()->{
+                InventoryType invType= p.getOpenInventory().getType();
+                if( invType.equals(InventoryType.CRAFTING) || (p.getGameMode().equals(GameMode.CREATIVE) && invType.equals(InventoryType.CREATIVE)) )openChangeMenu(p);
+            },1);
         }
 
         @EventHandler
