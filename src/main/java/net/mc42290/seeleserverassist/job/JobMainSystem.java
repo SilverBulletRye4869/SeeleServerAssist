@@ -29,6 +29,7 @@ public class JobMainSystem {
         Bukkit.getOnlinePlayers().forEach(JobMainSystem.this::playerJobRegisterOnMemory);
 
         JOB_CHANGE_SYSTEM = new JobChange(plugin,this);
+        new OffhandBowCancel(plugin);
 
         new CheckMatch(plugin,this);
     }
