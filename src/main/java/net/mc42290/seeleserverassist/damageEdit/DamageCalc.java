@@ -1,12 +1,11 @@
 package net.mc42290.seeleserverassist.damageEdit;
 
+import net.mc42290.seeleserverassist.Util.PlayerKill;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -79,7 +78,17 @@ public class DamageCalc implements Listener {
             if(!NO_KNOCKBACK_CASES.contains(e.getCause()))victim.setVelocity(victim.getLocation().getDirection().multiply(knockback));
         }
         else{
-            victim.setHealth(0);
+            if(victim instanceof Player){
+                Entity attacker = e.getDamager();
+                String attackerName;
+                if(attacker instanceof Projectile){
+                    Projectile projectile = (Projectile)attacker;
+                    if(projectile.getShooter() instanceof LivingEntity)attackerName =((LivingEntity)projectile.getShooter()).getName();
+                    else attackerName = attacker.getName();
+                }else attackerName = e.getDamager().getName();
+                PlayerKill.kill((Player)victim,victim.getName()+"は『"+attackerName+"』に殺された");
+            }
+            else victim.setHealth(0);
         }
     }
 
