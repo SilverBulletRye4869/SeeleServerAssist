@@ -1,7 +1,7 @@
-package net.mc42290.seeleserverassist;
+package net.mc42290.seeleserverassist.Util;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import net.md_5.bungee.api.ChatColor;
+import net.mc42290.seeleserverassist.SeeleServerAssist;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -18,16 +17,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class Util {
-    public static final String PREFIX = "§e§l[Seele_42290]";
+public class UtilSet {
+    private static final JavaPlugin plugin = SeeleServerAssist.getInstance();
+    public static final String PREFIX = plugin.getConfig().getString("prefix","§e§l[§b§lSystem§e§l]");
     public static final ItemStack GUI_BG = createItem(Material.BLUE_STAINED_GLASS_PANE,"§r");
     public static final ItemStack NULL_BG = createItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE,"§r");
     private static final Logger log = SeeleServerAssist.getLog();
-    private static final JavaPlugin plugin = SeeleServerAssist.getInstance();
+
 
     public static ItemStack createItem(Material m,String name){return createItem(m,name,null,0,null);}
     public static ItemStack createItem(Material m, String name, List<String> lore){return createItem(m,name,lore,0,null);}
@@ -67,7 +68,7 @@ public class Util {
     }
 
     public enum MessageType{INFO,WARNING,ERROR}
-    public static void sendConsole(String msg){sendConsole(msg,MessageType.INFO);}
+    public static void sendConsole(String msg){sendConsole(msg,MessageType.ERROR);}
     public static void sendConsole(String msg, MessageType type){
         switch (type) {
             case INFO:
@@ -134,4 +135,7 @@ public class Util {
         double theta = Math.abs(-Math.atan2(e2loc.getX() - e1loc.getX(),e2loc.getZ() - e1loc.getZ()) - e1loc.getYaw() / 180*Math.PI);
         return Math.min(2*Math.PI-theta,theta);
     }
+
+
+
 }

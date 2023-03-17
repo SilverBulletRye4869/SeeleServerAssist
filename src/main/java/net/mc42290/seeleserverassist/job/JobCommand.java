@@ -2,7 +2,7 @@ package net.mc42290.seeleserverassist.job;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.mc42290.seeleserverassist.SeeleServerAssist;
-import net.mc42290.seeleserverassist.Util;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -26,7 +26,7 @@ public class JobCommand implements CommandExecutor {
         PluginCommand command = plugin.getCommand("mc42290.job");
         this.JOB_MAIN_SYSTEM = jobMainSystem;
         if(command==null){
-            Util.sendConsole("commandの登録に失敗しました", Util.MessageType.ERROR);
+            UtilSet.sendConsole("commandの登録に失敗しました", UtilSet.MessageType.ERROR);
             return;
         }
         command.setExecutor(this);
@@ -53,29 +53,29 @@ public class JobCommand implements CommandExecutor {
                 }}.getItem();
 
                 p.getInventory().addItem(item);
-                Util.sendPrefixMessage(p,"§d§l職業選択券("+availableNum+"回分)§a§lを取得しました");
+                UtilSet.sendPrefixMessage(p,"§d§l職業選択券("+availableNum+"回分)§a§lを取得しました");
                 break;
 
             case "setjob":
                 if(!sender.hasPermission("mc42290.admin.job"))return true;
                 if(args.length<3){
-                    Util.sendPrefixMessage(p,"§c対象と、jobを正しく入力してください。");
+                    UtilSet.sendPrefixMessage(p,"§c対象と、jobを正しく入力してください。");
                     return true;
                 }
                 target = Bukkit.getPlayer(args[1]);
                 if(target == null){
-                    Util.sendPrefixMessage(p,"§c対象のプレイヤーが見つかりませんでした");
+                    UtilSet.sendPrefixMessage(p,"§c対象のプレイヤーが見つかりませんでした");
                     return true;
                 }
                 JobMainSystem.JOB job;
                 try {
                     job = JobMainSystem.JOB.valueOf(args[2]);
                 }catch (IllegalArgumentException e){
-                    Util.sendPrefixMessage(p,"§c§l職業を正しく入力してください");
+                    UtilSet.sendPrefixMessage(p,"§c§l職業を正しく入力してください");
                     return true;
                 }
                 JOB_MAIN_SYSTEM.setJob(target,job);
-                Util.sendPrefixMessage(p,"§d§l"+target.getName()+"§aの職業を§d§l"+job+"§a§lに変更しました");
+                UtilSet.sendPrefixMessage(p,"§d§l"+target.getName()+"§aの職業を§d§l"+job+"§a§lに変更しました");
 
                 break;
 
@@ -83,7 +83,7 @@ public class JobCommand implements CommandExecutor {
                 if(!sender.hasPermission("mc42290.admin.job") || args.length < 2)return true;
                 target = Bukkit.getPlayer(args[1]);
                 if(target == null){
-                    Util.sendPrefixMessage(p,"§c対象のプレイヤーが見つかりませんでした");
+                    UtilSet.sendPrefixMessage(p,"§c対象のプレイヤーが見つかりませんでした");
                     return true;
                 }
                 SeeleServerAssist.getJobSystem().setJob(target,0);
@@ -93,8 +93,8 @@ public class JobCommand implements CommandExecutor {
                 if(args.length<2 || (target = Bukkit.getOfflinePlayer(args[1])) == null)return true;
             case "check":
                 if(target == null)target=p;
-                Util.sendPrefixMessage(p,"§d§l"+target.getName()+"§a§lの職業は次の通りです");
-                Util.sendPrefixMessage(p,JOB_MAIN_SYSTEM.getJob(target).toString());
+                UtilSet.sendPrefixMessage(p,"§d§l"+target.getName()+"§a§lの職業は次の通りです");
+                UtilSet.sendPrefixMessage(p,JOB_MAIN_SYSTEM.getJob(target).toString());
                 break;
 
         }

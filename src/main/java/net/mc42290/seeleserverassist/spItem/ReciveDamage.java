@@ -1,6 +1,6 @@
 package net.mc42290.seeleserverassist.spItem;
 
-import net.mc42290.seeleserverassist.Util;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,8 +19,8 @@ public class ReciveDamage implements Listener {
     public void onEntityDamage(EntityDamageEvent e){
         if(!(e.getEntity() instanceof Player))return;
 
-        int nbtH = Util.getNBT("adwe", e.getEntity(), EquipmentSlot.HAND);
-        int nbtOH = Util.getNBT("adwe", e.getEntity(), EquipmentSlot.OFF_HAND);
+        int nbtH = UtilSet.getNBT("adwe", e.getEntity(), EquipmentSlot.HAND);
+        int nbtOH = UtilSet.getNBT("adwe", e.getEntity(), EquipmentSlot.OFF_HAND);
         if(nbtOH + nbtH ==0)return;
         EntityDamageEvent.DamageCause reason = e.getCause();
         switch (reason){

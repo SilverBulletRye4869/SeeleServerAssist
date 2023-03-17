@@ -1,7 +1,6 @@
 package net.mc42290.seeleserverassist.spItem;
 
-import net.mc42290.seeleserverassist.SeeleServerAssist;
-import net.mc42290.seeleserverassist.Util;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -18,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import static net.mc42290.seeleserverassist.Util.*;
+import static net.mc42290.seeleserverassist.Util.UtilSet.*;
 
 public class Attack implements Listener {
     private final JavaPlugin plugin;
@@ -58,7 +57,7 @@ public class Attack implements Listener {
                 p.setHealth(e.getFinalDamage() * 0.3 + p.getHealth());
                 break;
             case 12:
-                if(p.getLocation().distance(victim.getLocation()) > Util.getNBT_lf("reach",p,EquipmentSlot.HAND,4.0))e.setCancelled(true);
+                if(p.getLocation().distance(victim.getLocation()) > UtilSet.getNBT_lf("reach",p,EquipmentSlot.HAND,4.0))e.setCancelled(true);
                 break;
             case 13:
                 loc = p.getLocation();
@@ -85,7 +84,7 @@ public class Attack implements Listener {
                 double hp_max = ((LivingEntity) victim).getMaxHealth();
 
                 String msg ="§7§lHP: §a§l"+( nbtH == 6 ? ( (int)((hp/hp_max)*100)+"%" ) : String.format("%.2f§7§l/%.2f",hp,hp_max));
-                Util.sendActionBar(p,msg);
+                UtilSet.sendActionBar(p,msg);
         }
 
     }

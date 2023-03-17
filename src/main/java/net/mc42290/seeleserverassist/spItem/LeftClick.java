@@ -1,8 +1,7 @@
 package net.mc42290.seeleserverassist.spItem;
 
-import net.mc42290.seeleserverassist.Util;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -15,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashSet;
 import java.util.Set;
-import static net.mc42290.seeleserverassist.Util.*;
+import static net.mc42290.seeleserverassist.Util.UtilSet.*;
 
 public class LeftClick implements Listener {
     private static final Set<String> cooltime = new HashSet<>();
@@ -33,7 +32,7 @@ public class LeftClick implements Listener {
         cooltime.add("interact_"+p);
         Bukkit.getScheduler().runTaskLater(plugin,()->cooltime.remove("interact_"+p),1);  //2回は知らないようにするやつ
 
-        int nbtM = Util.getNBT("adwe",e.getPlayer(), EquipmentSlot.HAND);
+        int nbtM = UtilSet.getNBT("adwe",e.getPlayer(), EquipmentSlot.HAND);
 
         switch (nbtM){
             case 12:
@@ -44,7 +43,7 @@ public class LeftClick implements Listener {
                     .filter(entity -> (entity.getType().equals(EntityType.ZOMBIE) || entity.getType().equals(EntityType.SKELETON)))
                     .filter(entity -> p.getLocation().distance(entity.getLocation()) < reach)
                     .filter(p::hasLineOfSight)
-                    .filter(entity -> Util.getRelativeAngle(p,entity)< theta)
+                    .filter(entity -> UtilSet.getRelativeAngle(p,entity)< theta)
                     .map(entity -> (LivingEntity)entity)
                     .forEach(entity -> entity.damage(damage,p));
 

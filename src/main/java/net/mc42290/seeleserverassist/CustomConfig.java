@@ -1,14 +1,7 @@
 package net.mc42290.seeleserverassist;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -40,7 +33,7 @@ public class CustomConfig {
         try {
             file.createNewFile();
         }catch (IOException e){
-            Util.sendConsole("yml: 『"+parent+"/"+id+"』の作成に失敗しました。");
+            UtilSet.sendConsole("yml: 『"+parent+"/"+id+"』の作成に失敗しました。");
             e.printStackTrace();
             return null;
         }
@@ -69,7 +62,7 @@ public class CustomConfig {
         try{
             config.get(parent+"_"+id).save(new File(plugin.getDataFolder(),"data/"+parent+"/" + id + ".yml"));
         }catch (IOException e){
-            Util.sendConsole("yml: 『"+parent+"/"+id+"』の保存に失敗しました。");
+            UtilSet.sendConsole("yml: 『"+parent+"/"+id+"』の保存に失敗しました。");
         }
     }
 

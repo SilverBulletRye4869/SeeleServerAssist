@@ -1,6 +1,6 @@
 package net.mc42290.seeleserverassist.spItem;
 
-import net.mc42290.seeleserverassist.Util;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -34,12 +34,12 @@ public class RightClick implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin,()->cooltime.remove("interact_"+p),1);  //2回は知らないようにするやつ
 
         Location loc;
-        int nbtM = Util.getNBT("adwe",e.getPlayer(), EquipmentSlot.HAND);
+        int nbtM = UtilSet.getNBT("adwe",e.getPlayer(), EquipmentSlot.HAND);
 
         switch (nbtM){
             case 10:
             case 11:
-                if(cooltime.contains("bom_magic_"+p)) Util.sendPrefixMessage(p,"§cクールダウン中！");
+                if(cooltime.contains("bom_magic_"+p)) UtilSet.sendPrefixMessage(p,"§cクールダウン中！");
                 else{
 
                     if(nbtM==10)loc=p.getLocation().add(0, 1, 0);
