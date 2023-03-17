@@ -2,6 +2,8 @@ package net.mc42290.seeleserverassist;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTType;
+import net.mc42290.seeleserverassist.Util.PlayerKill;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,15 +32,18 @@ public class AssistCommand implements CommandExecutor {
 
         ItemStack item = p.getInventory().getItemInMainHand();
         switch (args[0]){
+            case "killme":
+                PlayerKill.kill(p,p.getName()+"は自ら命を絶った。");
+                break;
             case "getnbt":
                 if(!sender.hasPermission("mc42290.admin"))return true;
                 if(item.getAmount() == 0)return true;
 
                 if(args.length > 1){
                     NBTItem nbtItem = new NBTItem(item);
-                    if(!nbtItem.hasKey(args[1]))Util.sendPrefixMessage(p,"null");
-                    Util.sendPrefixMessage(p,"§d§l{ "+args[1]+" : "+nbtItem.getInteger(args[1])+" }");
-                }else Util.sendPrefixMessage(p," §d§l"+new NBTItem(item).toString());
+                    if(!nbtItem.hasKey(args[1])) UtilSet.sendPrefixMessage(p,"null");
+                    UtilSet.sendPrefixMessage(p,"§d§l{ "+args[1]+" : "+nbtItem.getInteger(args[1])+" }");
+                }else UtilSet.sendPrefixMessage(p," §d§l"+new NBTItem(item).toString());
                 break;
             case "setnbt":
                 if(!sender.hasPermission("mc42290.admin"))return true;
@@ -46,7 +51,7 @@ public class AssistCommand implements CommandExecutor {
                 p.getInventory().setItemInMainHand(new NBTItem(item){{
                     setInteger(args[1],Integer.parseInt(args[2]));
                 }}.getItem());
-                Util.sendPrefixMessage(p,"§a§l手に持ってるアイテムにnbt§d§l{ "+args[1]+" : "+args[2]+" }§a§lを適用しました");
+                UtilSet.sendPrefixMessage(p,"§a§l手に持ってるアイテムにnbt§d§l{ "+args[1]+" : "+args[2]+" }§a§lを適用しました");
                 break;
 
             case "removenbt":
@@ -55,19 +60,19 @@ public class AssistCommand implements CommandExecutor {
                 p.getInventory().setItemInMainHand(new NBTItem(item){{
                     removeKey(args[1]);
                 }}.getItem());
-                Util.sendPrefixMessage(p,"§a§l手に持っているアイテムのnbt§d§l"+args[1]+"§a§lを除去しました");
+                UtilSet.sendPrefixMessage(p,"§a§l手に持っているアイテムのnbt§d§l"+args[1]+"§a§lを除去しました");
                 break;
 
             case "getmodel":
                 ItemMeta meta = item.getItemMeta();
                 if(!sender.hasPermission("mc42290.admin") || meta==null)return true;
-                Util.sendPrefixMessage(p,"§a§l現在持っているアイテムのカスモデ番号: §d§l"+ (meta.hasCustomModelData() ? meta.getCustomModelData(): "null"));
+                UtilSet.sendPrefixMessage(p,"§a§l現在持っているアイテムのカスモデ番号: §d§l"+ (meta.hasCustomModelData() ? meta.getCustomModelData(): "null"));
                 break;
 
             case "setmodel":
                 if(!sender.hasPermission("mc42290.admin") || item.getItemMeta()==null|| args.length < 2 || !args[1].matches("\\d+"))return true;
                 item.getItemMeta().setCustomModelData(Integer.parseInt(args[1]));
-                Util.sendPrefixMessage(p,"§a§l現在持っているアイテムのカスモデ番号を§d§l"+args[1]+"§a§lに変更しました");
+                UtilSet.sendPrefixMessage(p,"§a§l現在持っているアイテムのカスモデ番号を§d§l"+args[1]+"§a§lに変更しました");
 
         }
         return true;
@@ -81,8 +86,9 @@ public class AssistCommand implements CommandExecutor {
             Player p = (Player) sender;
             switch (args.length){
                 case 1:
-                    if(sender.hasPermission("mc42290.admin"))return List.of("getnbt","setnbt","getmodel","setmodel","removenbt");
-                    break;
+                    if(sender.hasPermission("mc42290.admin"))return List.of("killme","getnbt","setnbt","getmodel","setmodel","removenbt");
+                    else return List.of("killme");
+
                 case 2:
                     switch (args[0]){
                         case "getnbt":
