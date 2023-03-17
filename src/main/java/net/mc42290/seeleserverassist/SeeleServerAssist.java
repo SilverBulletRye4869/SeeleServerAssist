@@ -1,6 +1,9 @@
 package net.mc42290.seeleserverassist;
 
+import net.mc42290.seeleserverassist.Util.PlayerKill;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import net.mc42290.seeleserverassist.damageEdit.DamageCalc;
+import net.mc42290.seeleserverassist.deathpenalty.setHealthAndSatisfaction;
 import net.mc42290.seeleserverassist.job.JobCommand;
 import net.mc42290.seeleserverassist.job.JobMainSystem;
 import net.mc42290.seeleserverassist.spItem.Attack;
@@ -20,26 +23,35 @@ public final class SeeleServerAssist extends JavaPlugin {
     private static JavaPlugin plugin = null;
     private static Logger log = null;
     private static JobMainSystem JOB_SYSTEM = null;
+    //private static JDA jda = null;
+    //private static Map<String, TextChannel> textChannelMap = new HashMap<>();
 
     @Override
     public void onEnable() {
-
+        saveDefaultConfig();
         if(!folderSetup()){
-            Util.sendConsole("プラグインフォルダの作成に失敗しました", Util.MessageType.ERROR);
+            UtilSet.sendConsole("プラグインフォルダの作成に失敗しました", UtilSet.MessageType.ERROR);
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-
+        this.saveDefaultConfig();
         // Plugin startup logic
         plugin = this;
         log = getLogger();
 
         new DamageCalc(this);
+        new setHealthAndSatisfaction(this);
         JOB_SYSTEM = new JobMainSystem(this);
         new JobCommand(this,JOB_SYSTEM);
         new Attack(this);new ReciveDamage(this);new RightClick(this);new LeftClick(this);
         new AssistCommand(this);
+
+        //Util
+        new PlayerKill(this);
+
+
+        //botStart();
     }
 
     public static JavaPlugin getInstance(){return plugin;}
@@ -49,14 +61,19 @@ public final class SeeleServerAssist extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        /*
+        if(jda!=null){
+            jda.shutdownNow();
+        }
+        */
     }
 
     private boolean folderSetup(){
         try{
-            Files.createDirectories(Paths.get(this.getDataFolder()+"/data"));
+            Files.createDirectories(Paths.get(this.getDataFolder()+"/data/userdata"));
             Files.createDirectories(Paths.get(this.getDataFolder()+"/log"));
         }catch (IOException e){
-            Util.sendConsole("dataフォルダ又はlogフォルダの作成に失敗しました", Util.MessageType.ERROR);
+            UtilSet.sendConsole("dataフォルダ又はlogフォルダの作成に失敗しました", UtilSet.MessageType.ERROR);
             e.printStackTrace();
             return false;
         }
@@ -67,17 +84,17 @@ public final class SeeleServerAssist extends JavaPlugin {
         }catch (IOException e){
             if(Files.exists(Paths.get(this.getDataFolder()+"README.txt")))return true;
             else{
-                Util.sendConsole("README.txtファイルの作成に失敗しました", Util.MessageType.ERROR);
+                UtilSet.sendConsole("README.txtファイルの作成に失敗しました", UtilSet.MessageType.ERROR);
                 e.printStackTrace();
                 return false;
             }
         }
         if(!file.isFile()){
-            Util.sendConsole("README.txtはファイルではありません",Util.MessageType.ERROR);
+            UtilSet.sendConsole("README.txtはファイルではありません", UtilSet.MessageType.ERROR);
             return false;
         }
         if(!file.canWrite()){
-            Util.sendConsole("README.txtは書き込み不可のファイルです",Util.MessageType.ERROR);
+            UtilSet.sendConsole("README.txtは書き込み不可のファイルです", UtilSet.MessageType.ERROR);
             return false;
         }
 
@@ -89,10 +106,38 @@ public final class SeeleServerAssist extends JavaPlugin {
             );
             fw.close();
         }catch (IOException e){
-            Util.sendConsole("README.txtファイルの書き込みに失敗しました",Util.MessageType.ERROR);
+            UtilSet.sendConsole("README.txtファイルの書き込みに失敗しました", UtilSet.MessageType.ERROR);
             return false;
         }
 
         return true;
     }
+
+    /*
+    private boolean botStart(){
+        final String BOT_TOKEN = getConfig().getString("discord.bot_token");
+        if(BOT_TOKEN == null || BOT_TOKEN.equals(""))return false;
+        try{
+            jda = JDABuilder.createDefault(BOT_TOKEN, GatewayIntent.GUILD_MESSAGES)
+                    .setRawEventsEnabled(true)
+                    .setActivity(Activity.playing("Seele鯖"))
+                    .build();
+        }catch (LoginException e){
+            UtilSet.sendConsole("BOTの起動に失敗しました。tokenが会っているかを再度ご確認ください。");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static TextChannel getTextChannel(String type){
+        if(jda == null)return null;
+        if(!textChannelMap.containsKey(type)){
+            if(plugin.getConfig().getString("discord.channel."+type)==null)return null;
+            textChannelMap.put(type,jda.getTextChannelById(plugin.getConfig().getString("discord.channel."+type)));
+        }
+        return textChannelMap.get(type);
+    }
+
+    */
 }
