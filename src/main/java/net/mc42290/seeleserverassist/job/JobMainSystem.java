@@ -55,14 +55,14 @@ public class JobMainSystem {
     @Deprecated public void setJob(OfflinePlayer p, int jobNum){
         UUID u = p.getUniqueId();
         PLAYER_JOB.put(u,jobNum);
-        CustomConfig.getYmlByID(u.toString()).set("job",jobNum);
-        CustomConfig.saveYmlByID(u.toString());
+        CustomConfig.getYmlByID("userdata",u.toString()).set("job",jobNum);
+        CustomConfig.saveYmlByID("userdata",u.toString());
     }
 
     public Set<JOB> getJob(OfflinePlayer p){return getJob(p.getUniqueId());}
     public Set<JOB> getJob(UUID u){
         Set<JOB> jobs = new HashSet<>();
-        char[] jobdata = Integer.toBinaryString(CustomConfig.getYmlByID(u.toString()).getInt("job",0)).toCharArray();
+        char[] jobdata = Integer.toBinaryString(CustomConfig.getYmlByID("userdata",u.toString()).getInt("job",0)).toCharArray();
         for(int i = 1;i<=jobdata.length;i++){
             if(jobdata[jobdata.length - i] == '1')jobs.add(JOB.values()[i-1]);
         }
@@ -92,11 +92,11 @@ public class JobMainSystem {
         UUID uuid =p.getUniqueId();
         String uuidStr = uuid.toString();
         int playerJob = 1;
-        if(CustomConfig.existYml(uuidStr))playerJob = CustomConfig.getYmlByID(uuidStr).getInt("job");
+        if(CustomConfig.existYml("userdata",uuidStr))playerJob = CustomConfig.getYmlByID("userdata",uuidStr).getInt("job");
         else{
-            CustomConfig.createYmlByID(uuidStr);
-            CustomConfig.getYmlByID(uuidStr).set("job",128);
-            CustomConfig.saveYmlByID(uuidStr);
+            CustomConfig.createYmlByID("userdata",uuidStr);
+            CustomConfig.getYmlByID("userdata",uuidStr).set("job",128);
+            CustomConfig.saveYmlByID("userdata",uuidStr);
         }
         PLAYER_JOB.put(uuid,playerJob);
     }

@@ -22,54 +22,54 @@ public class CustomConfig {
     private static JavaPlugin plugin = SeeleServerAssist.getInstance();
     private static HashSet<String> existSet = new HashSet<>();
 
-    public static YamlConfiguration getYmlByID(String id) {
-        if(!config.containsKey(id)){
-            if(!reloadYmlByID(id))return null;
+    public static YamlConfiguration getYmlByID(String parent,String id) {
+        if(!config.containsKey(parent+"_"+id)){
+            if(!reloadYmlByID(parent,id))return null;
         }
-        return config.get(id);
+        return config.get(parent+"_"+id);
     }
 
-    public static boolean existYml(String id){
-        if(existSet.contains(id))return true;
-        if(new File(plugin.getDataFolder(),"data/"+id+".yml").exists()){existSet.add(id);return true;}
+    public static boolean existYml(String parent,String id){
+        if(existSet.contains(parent+"_"+id))return true;
+        if(new File(plugin.getDataFolder(),"data/"+parent+"/"+id+".yml").exists()){existSet.add(parent+"_"+id);return true;}
         return false;
     }
 
-    public static YamlConfiguration createYmlByID(String id){
-        File file = new File(plugin.getDataFolder(),"data/"+id+".yml");
+    public static YamlConfiguration createYmlByID(String parent,String id){
+        File file = new File(plugin.getDataFolder(),"data/"+parent+"/"+id+".yml");
         try {
             file.createNewFile();
         }catch (IOException e){
-            System.err.println("id: "+id+"のymlファイルの作成に失敗しました");
+            Util.sendConsole("yml: 『"+parent+"/"+id+"』の作成に失敗しました。");
             e.printStackTrace();
             return null;
         }
-        return getYmlByID(id);
+        return getYmlByID(parent,id);
     }
 
-    static boolean deleteYmlByID(String id){
-        File file = new File(plugin.getDataFolder(),"data/"+id+".yml");
+    static boolean deleteYmlByID(String parent,String id){
+        File file = new File(plugin.getDataFolder(),"data/"+parent+"/"+id+".yml");
         boolean result = file.delete();
         if(result){
-            config.remove(id);
-            existSet.remove(id);
+            config.remove(parent+"_"+id);
+            existSet.remove(parent+"_"+id);
         }
         return result;
     }
 
-    public static boolean reloadYmlByID(String id){
-        File file = new File(plugin.getDataFolder(),"data/"+id+".yml");
+    public static boolean reloadYmlByID(String parent,String id){
+        File file = new File(plugin.getDataFolder(),"data/"+parent+"/"+id+".yml");
         if(!file.exists())return false;
         YamlConfiguration y = YamlConfiguration.loadConfiguration(file);
-        config.put(id,y);
+        config.put(parent+"_"+id,y);
         return true;
     }
 
-    public static void saveYmlByID(String id){
+    public static void saveYmlByID(String parent,String id){
         try{
-            config.get(id).save(new File(plugin.getDataFolder(),"data/" + id + ".yml"));
+            config.get(parent+"_"+id).save(new File(plugin.getDataFolder(),"data/"+parent+"/" + id + ".yml"));
         }catch (IOException e){
-            System.err.println("『"+id+"』の保存に失敗しました。:"+e);
+            Util.sendConsole("yml: 『"+parent+"/"+id+"』の保存に失敗しました。");
         }
     }
 
