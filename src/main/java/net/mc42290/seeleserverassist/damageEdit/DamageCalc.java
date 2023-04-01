@@ -1,6 +1,7 @@
 package net.mc42290.seeleserverassist.damageEdit;
 
 import net.mc42290.seeleserverassist.Util.PlayerKill;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -16,6 +17,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -67,6 +70,13 @@ public class DamageCalc implements Listener {
         //victim.sendMessage("shield: "+shieldDamage);
 
         damage = Math.max(damage,0.1);
+
+        PotionEffect resistancePotion = victim.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+        if(resistancePotion!=null) {
+            int resistanceLv = resistancePotion.getAmplifier();
+            damage *= 1.0 - 0.04 * resistanceLv * resistanceLv;
+        }
+
         if(victim.getHealth() - damage> 0){
             victim.setHealth(victim.getHealth() - damage);
             if(victim instanceof Player){
