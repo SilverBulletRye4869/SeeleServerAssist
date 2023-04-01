@@ -105,9 +105,10 @@ public class UtilSet {
         plugin.getServer().broadcastMessage(s);
     }
 
-    public static int getNBT(String key, Entity e, EquipmentSlot type){
+    public static int getNBT(String key, Entity e,EquipmentSlot type){
         return (int)getNBT_lf(key,e,type,-1);
     }
+    public static int getNBT(String key, Entity e, EquipmentSlot type, int defaultNum){return (int)getNBT_lf(key,e,type,defaultNum);}
 
     public static double getNBT_lf(String key, Entity e,EquipmentSlot type, double defaultNum){
         ItemStack item = ((LivingEntity)e).getEquipment().getItem(type);
@@ -117,11 +118,18 @@ public class UtilSet {
         else return defaultNum;
     }
 
+    public static String getNBT_s(String key, Entity e, EquipmentSlot type, String defaultStr){
+        ItemStack item = ((LivingEntity)e).getEquipment().getItem(type);
+        if(item == null || item.getType()== Material.AIR) return defaultStr;
+        NBTItem nbtItem = new NBTItem(item);
+        if(nbtItem.hasKey(key))return nbtItem.getString(key);
+        else return defaultStr;
+    }
+
 
     public static boolean ChanceOf(double chance){
         double r = Math.random() * 100;
-        if(r < chance)return true;
-        else return false;
+        return r<chance;
     }
 
     public static Location LocationCPY(Location loc){
