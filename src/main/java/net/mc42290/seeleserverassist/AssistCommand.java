@@ -42,14 +42,15 @@ public class AssistCommand implements CommandExecutor {
                 if(args.length > 1){
                     NBTItem nbtItem = new NBTItem(item);
                     if(!nbtItem.hasKey(args[1])) UtilSet.sendPrefixMessage(p,"null");
-                    UtilSet.sendPrefixMessage(p,"§d§l{ "+args[1]+" : "+nbtItem.getInteger(args[1])+" }");
+                    UtilSet.sendPrefixMessage(p,"§d§l{ "+args[1]+" : "+nbtItem.getString(args[1])+" }");
                 }else UtilSet.sendPrefixMessage(p," §d§l"+new NBTItem(item).toString());
                 break;
             case "setnbt":
                 if(!sender.hasPermission("mc42290.admin"))return true;
-                if(item.getAmount() == 0 || args.length < 3 || !args[2].matches("\\d+"))return true;
+                if(item.getAmount() == 0 || args.length < 3)return true;
                 p.getInventory().setItemInMainHand(new NBTItem(item){{
-                    setInteger(args[1],Integer.parseInt(args[2]));
+                    if(args[2].matches("\\d+.?\\d*"))setDouble(args[1],Double.parseDouble(args[2]));
+                    else setString(args[1],args[2]);
                 }}.getItem());
                 UtilSet.sendPrefixMessage(p,"§a§l手に持ってるアイテムにnbt§d§l{ "+args[1]+" : "+args[2]+" }§a§lを適用しました");
                 break;
