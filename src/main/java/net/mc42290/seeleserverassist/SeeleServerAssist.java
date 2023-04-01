@@ -6,10 +6,8 @@ import net.mc42290.seeleserverassist.damageEdit.DamageCalc;
 import net.mc42290.seeleserverassist.deathpenalty.setHealthAndSatisfaction;
 import net.mc42290.seeleserverassist.job.JobCommand;
 import net.mc42290.seeleserverassist.job.JobMainSystem;
-import net.mc42290.seeleserverassist.spItem.Attack;
-import net.mc42290.seeleserverassist.spItem.LeftClick;
-import net.mc42290.seeleserverassist.spItem.ReciveDamage;
-import net.mc42290.seeleserverassist.spItem.RightClick;
+import net.mc42290.seeleserverassist.spItem.Sp_MainSystem;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -44,12 +42,12 @@ public final class SeeleServerAssist extends JavaPlugin {
         new setHealthAndSatisfaction(this);
         JOB_SYSTEM = new JobMainSystem(this);
         new JobCommand(this,JOB_SYSTEM);
-        new Attack(this);new ReciveDamage(this);new RightClick(this);new LeftClick(this);
         new AssistCommand(this);
+
+        new Sp_MainSystem(this).setup();
 
         //Util
         new PlayerKill(this);
-
 
         //botStart();
     }
