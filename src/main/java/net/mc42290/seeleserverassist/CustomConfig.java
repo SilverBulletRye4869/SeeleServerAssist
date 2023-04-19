@@ -58,12 +58,14 @@ public class CustomConfig {
         return true;
     }
 
-    public static void saveYmlByID(String parent,String id){
+    public static boolean saveYmlByID(String parent,String id){
         try{
             config.get(parent+"_"+id).save(new File(plugin.getDataFolder(),"data/"+parent+"/" + id + ".yml"));
         }catch (IOException e){
             UtilSet.sendConsole("yml: 『"+parent+"/"+id+"』の保存に失敗しました。");
+            return false;
         }
+        return true;
     }
 
 
