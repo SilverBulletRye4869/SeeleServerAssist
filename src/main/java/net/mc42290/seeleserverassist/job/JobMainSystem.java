@@ -59,15 +59,18 @@ public class JobMainSystem {
         CustomConfig.saveYmlByID("userdata",u.toString());
     }
 
+
     public Set<JOB> getJob(OfflinePlayer p){return getJob(p.getUniqueId());}
     public Set<JOB> getJob(UUID u){
         Set<JOB> jobs = new HashSet<>();
-        char[] jobdata = Integer.toBinaryString(CustomConfig.getYmlByID("userdata",u.toString()).getInt("job",0)).toCharArray();
+        char[] jobdata = getJob_c(u);
         for(int i = 1;i<=jobdata.length;i++){
             if(jobdata[jobdata.length - i] == '1')jobs.add(JOB.values()[i-1]);
         }
         return jobs;
     }
+
+    public char[] getJob_c(UUID u){return Integer.toBinaryString(CustomConfig.getYmlByID("userdata",u.toString()).getInt("job",0)).toCharArray();}
 
     public JobChange getJobChangeSystem(){return JOB_CHANGE_SYSTEM;}
 
