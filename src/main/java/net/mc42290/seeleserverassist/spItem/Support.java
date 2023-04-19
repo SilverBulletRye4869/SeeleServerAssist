@@ -9,6 +9,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -31,7 +32,7 @@ public class Support implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityAttack(EntityDamageByEntityEvent e){
         if (!e.getDamager().getType().equals(EntityType.PLAYER)) return;
         Player p = (Player) e.getDamager();
