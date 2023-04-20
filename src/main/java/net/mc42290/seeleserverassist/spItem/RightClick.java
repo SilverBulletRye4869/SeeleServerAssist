@@ -25,7 +25,7 @@ public class RightClick implements Listener {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onAction(PlayerInteractEvent e){
         Player p = e.getPlayer();
         if(!(e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)))return;
@@ -58,12 +58,6 @@ public class RightClick implements Listener {
                     Bukkit.getScheduler().runTaskLater(plugin, () -> cooltime.remove("bom_magic_" + p), 100);
                     break;
                 }
-
         }
-
-
-
-
-
     }
 }

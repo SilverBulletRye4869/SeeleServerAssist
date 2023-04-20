@@ -40,7 +40,7 @@ public class Physical implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityAttack(EntityDamageByEntityEvent e) {
         if (!e.getDamager().getType().equals(EntityType.PLAYER)) return;
         Player p = (Player) e.getDamager();

@@ -6,7 +6,9 @@ import net.mc42290.seeleserverassist.damageEdit.DamageCalc;
 import net.mc42290.seeleserverassist.deathpenalty.setHealthAndSatisfaction;
 import net.mc42290.seeleserverassist.job.JobCommand;
 import net.mc42290.seeleserverassist.job.JobMainSystem;
+import net.mc42290.seeleserverassist.level.LevelMainSystem;
 import net.mc42290.seeleserverassist.spItem.Sp_MainSystem;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,6 +23,7 @@ public final class SeeleServerAssist extends JavaPlugin {
     private static JavaPlugin plugin = null;
     private static Logger log = null;
     private static JobMainSystem JOB_SYSTEM = null;
+    private static LevelMainSystem LEVEL_SYSTEM = null;
     //private static JDA jda = null;
     //private static Map<String, TextChannel> textChannelMap = new HashMap<>();
 
@@ -45,6 +48,8 @@ public final class SeeleServerAssist extends JavaPlugin {
         new AssistCommand(this);
 
         new Sp_MainSystem(this).setup();
+        LEVEL_SYSTEM = new LevelMainSystem();
+        Bukkit.getOnlinePlayers().forEach(LEVEL_SYSTEM::startRecord);
 
         //Util
         new PlayerKill(this);
@@ -59,6 +64,8 @@ public final class SeeleServerAssist extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        Bukkit.getOnlinePlayers().forEach(LEVEL_SYSTEM::save);
+
         /*
         if(jda!=null){
             jda.shutdownNow();
