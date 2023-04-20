@@ -14,15 +14,16 @@ public class UserData {
 
     private final UUID UUID;
     private final Player P;
-    private final long LOGIN_TIME;
+    private long loginTime;
     private double attackDamageAmount = 0;
     private double receiveDamageAmount = 0;
     private double healAmount = 0;
+    private long bonusExp = 0;
 
     public UserData(Player p){
         UUID = p.getUniqueId();
         P = p;
-        LOGIN_TIME = System.currentTimeMillis();
+        loginTime = System.currentTimeMillis();
     }
 
     public void addAD(double amount){
@@ -37,17 +38,22 @@ public class UserData {
         healAmount+=amount;
     }
 
+    public void addBonusExp(long amount){bonusExp+=amount;}
+    public void removeBonusExp(long amount){bonusExp = Math.max(0,bonusExp-amount);}
+    public void resetBonusExp(long amount){bonusExp = 0;}
+
     public double getAD(){return attackDamageAmount;}
     public double getRD(){return receiveDamageAmount;}
     public double getH(){return healAmount;}
-    public long getPlayTime(){return System.currentTimeMillis()-LOGIN_TIME;}
+    public long getPlayTime(){return System.currentTimeMillis()- loginTime;}
+    public long getBonusExp(){return bonusExp;}
 
     public boolean save(){
         YamlConfiguration yml = CustomConfig.getYmlByID("userdata",UUID.toString());
         JobMainSystem jobSystem =  SeeleServerAssist.getJobSystem();
         char[] jobData = jobSystem.getJob_c(UUID);
         if(jobData==null)return false;
-        Long exp = Calcer.calcExp(getPlayTime(),attackDamageAmount,receiveDamageAmount);
+        Long exp = Calcer.calcExp(getPlayTime(),attackDamageAmount,receiveDamageAmount,bonusExp);
         for(int i = 1;i<=jobData.length;i++){
             if(i==8||jobData[jobData.length - i] == '0')continue;
             yml.set("data."+(i-1)+".attackDamageAmount",yml.getDouble("data."+(i-1)+".attackDamageAmount",0)+attackDamageAmount);
@@ -56,7 +62,13 @@ public class UserData {
             yml.set("data."+(i-1)+".exp",yml.getLong("data."+(i-1)+".exp")+exp);
         }
         yml.set("data.all.loginTime",yml.getLong("data.all.loginTime",0)+getPlayTime());
+        reset();
         return CustomConfig.saveYmlByID("userdata",UUID.toString());
+    }
+
+    public void reset(){
+        attackDamageAmount = receiveDamageAmount = healAmount = 0;
+        loginTime = System.currentTimeMillis();
     }
 
 }
