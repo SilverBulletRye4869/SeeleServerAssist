@@ -1,5 +1,6 @@
 package net.mc42290.seeleserverassist.level;
 
+import net.mc42290.seeleserverassist.SeeleServerAssist;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,11 +11,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 
 public class LevelMainSystem {
-    private final JavaPlugin plugin;
+    private static final JavaPlugin plugin = SeeleServerAssist.getInstance();
     private final HashMap<Player,UserData> USER_DATA_MAP = new HashMap<>();
 
-    public LevelMainSystem(JavaPlugin plugin){
-        this.plugin = plugin;
+    public LevelMainSystem(){
         plugin.getServer().getPluginManager().registerEvents(new listener(),plugin);
         new DataRecorder(this);
     }
@@ -23,9 +23,15 @@ public class LevelMainSystem {
         return USER_DATA_MAP.get(p);
     }
 
+    public void startRecord(Player p){
+        USER_DATA_MAP.put(p,new UserData(p));
+    }
+
     public boolean save(Player p){
         if(!USER_DATA_MAP.containsKey(p))return false;
-        return USER_DATA_MAP.get(p).save();
+        boolean res =  USER_DATA_MAP.get(p).save();
+        USER_DATA_MAP.remove(p);
+        return res;
     }
 
 
@@ -33,14 +39,13 @@ public class LevelMainSystem {
 
         @EventHandler
         public void onJoin(PlayerJoinEvent e){
-            Player p = e.getPlayer();
-            USER_DATA_MAP.put(p,new UserData(p));
+            startRecord(e.getPlayer());
         }
 
         @EventHandler
         public void onQuit(PlayerQuitEvent e){
             //ymlに保存させる
-            USER_DATA_MAP.get(e.getPlayer()).save();
+            save(e.getPlayer());
         }
     }
 }
