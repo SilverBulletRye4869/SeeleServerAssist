@@ -1,6 +1,7 @@
 package net.mc42290.seeleserverassist.job;
 
 import net.mc42290.seeleserverassist.CustomConfig;
+import net.mc42290.seeleserverassist.job.level.LevelMainSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -20,6 +21,7 @@ public class JobMainSystem {
     private final JobChange JOB_CHANGE_SYSTEM;
     private final JavaPlugin plugin;
 
+    public final LevelMainSystem LEVEL_SYSTEM;
     public final Predicate<Player> isNeet = p -> isJobMatch(p,JOB.NEET);
 
     public JobMainSystem(JavaPlugin plugin){
@@ -32,6 +34,9 @@ public class JobMainSystem {
         new OffhandBowCancel(plugin);
 
         new CheckMatch(plugin,this);
+
+        LEVEL_SYSTEM = new LevelMainSystem();
+        Bukkit.getOnlinePlayers().forEach(LEVEL_SYSTEM::startRecord);
     }
 
 
@@ -89,6 +94,25 @@ public class JobMainSystem {
             jobNum = num;
         }
         public int getNum(){return jobNum;}
+
+        public static String getName(int index){
+            try{
+                return JOB.values()[index].toString();
+            }catch (ArrayIndexOutOfBoundsException e){
+                return null;
+            }
+        }
+
+        private static String[] strings = null;
+        public static String[] toStrings(){
+            if(strings==null){
+                JOB[] jobs = JOB.values();
+                String[] strs = new String[jobs.length];
+                for(int i = 0;i<strs.length;i++)strs[i] = jobs[i].toString();
+                strings = strs;
+            }
+            return strings;
+        }
     }
 
     public void playerJobRegisterOnMemory(Player p){
