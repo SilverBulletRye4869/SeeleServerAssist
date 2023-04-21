@@ -1,4 +1,4 @@
-package net.mc42290.seeleserverassist.level;
+package net.mc42290.seeleserverassist.job.level;
 
 import net.mc42290.seeleserverassist.CustomConfig;
 import net.mc42290.seeleserverassist.SeeleServerAssist;
@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public class UserData {
     private static final JavaPlugin plugin = SeeleServerAssist.getInstance();
+    private static final String[] jobNames = JobMainSystem.JOB.toStrings();
 
     private final UUID UUID;
     private final Player P;
@@ -54,12 +55,15 @@ public class UserData {
         char[] jobData = jobSystem.getJob_c(UUID);
         if(jobData==null)return false;
         Long exp = Calcer.calcExp(getPlayTime(),attackDamageAmount,receiveDamageAmount,bonusExp);
-        for(int i = 1;i<=jobData.length;i++){
-            if(i==8||jobData[jobData.length - i] == '0')continue;
-            yml.set("data."+(i-1)+".attackDamageAmount",yml.getDouble("data."+(i-1)+".attackDamageAmount",0)+attackDamageAmount);
-            yml.set("data."+(i-1)+".receiveDamageAmount",yml.getDouble("data."+(i-1)+".receiveDamageAmount",0)+receiveDamageAmount);
-            yml.set("data."+(i-1)+".loginTime",yml.getLong("data."+(i-1)+".loginTime")+getPlayTime());
-            yml.set("data."+(i-1)+".exp",yml.getLong("data."+(i-1)+".exp")+exp);
+        for(int i = 0;i<jobData.length;i++){
+            String jobName = jobNames[i];
+            if(jobName.equals("NEET")||jobData[jobData.length - i - 1] == '0')continue;
+            yml.set("data."+jobName+".attackDamageAmount",yml.getDouble("data."+jobName+".attackDamageAmount",0)+attackDamageAmount);
+            yml.set("data."+jobName+".receiveDamageAmount",yml.getDouble("data."+jobName+".receiveDamageAmount",0)+receiveDamageAmount);
+            yml.set("data."+jobName+".loginTime",yml.getLong("data."+jobName+".loginTime",0)+getPlayTime());
+            long nextExp = yml.getLong("data."+jobName+".exp",0)+exp;
+            yml.set("data."+jobName+".exp",nextExp);
+            yml.set("data."+jobName+".lv",Calcer.calcJobLv(nextExp));
         }
         yml.set("data.all.loginTime",yml.getLong("data.all.loginTime",0)+getPlayTime());
         reset();
