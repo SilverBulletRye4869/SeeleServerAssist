@@ -45,7 +45,7 @@ public class LevelMainSystem {
         YamlConfiguration yml = CustomConfig.getYmlByID("userdata",uuid.toString());
         long[] jobLevels = new long[jobNames.length];
         for(int i = 1;i<jobNames.length;i++)jobLevels[i-1] =yml.getLong("data."+jobNames[i]+".lv",0);
-        return Calcer.calcPlayerLv(uuid,jobLevels);
+        return Calcer.calcPlayerLv(jobLevels);
     }
 
     public long getJobLv(Player p, JobMainSystem.JOB job){return getJobLv(p.getUniqueId(),job.toString());}
