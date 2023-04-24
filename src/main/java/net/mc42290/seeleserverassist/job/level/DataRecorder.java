@@ -1,4 +1,4 @@
-package net.mc42290.seeleserverassist.level;
+package net.mc42290.seeleserverassist.job.level;
 
 import net.mc42290.seeleserverassist.SeeleServerAssist;
 import org.bukkit.entity.Player;

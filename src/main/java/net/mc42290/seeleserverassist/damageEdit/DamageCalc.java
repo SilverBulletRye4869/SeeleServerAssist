@@ -45,7 +45,7 @@ public class DamageCalc implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e){
         //プレイヤーの時だけ実行
         LivingEntity victim = (LivingEntity)e.getEntity();
