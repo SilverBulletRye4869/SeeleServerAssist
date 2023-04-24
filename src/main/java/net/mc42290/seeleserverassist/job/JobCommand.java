@@ -38,7 +38,6 @@ public class JobCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player))return true;
         Player p = (Player) sender;
-        OfflinePlayer target = null;
 
         if(args.length < 1){
             //ヘルプ
@@ -63,7 +62,7 @@ public class JobCommand implements CommandExecutor {
                     UtilSet.sendPrefixMessage(p, "§c対象と、jobを正しく入力してください。");
                     return true;
                 }
-                target = Bukkit.getPlayer(args[1]);
+                OfflinePlayer target = Bukkit.getPlayer(args[1]);
                 if (target == null) {
                     UtilSet.sendPrefixMessage(p, "§c対象のプレイヤーが見つかりませんでした");
                     return true;
@@ -82,30 +81,32 @@ public class JobCommand implements CommandExecutor {
 
             case "removejob"-> {
                 if (!sender.hasPermission("mc42290.admin.job") || args.length < 2) return true;
-                target = Bukkit.getPlayer(args[1]);
+                OfflinePlayer target = Bukkit.getPlayer(args[1]);
                 if (target == null) {
                     UtilSet.sendPrefixMessage(p, "§c対象のプレイヤーが見つかりませんでした");
                     return true;
                 }
-                SeeleServerAssist.getJobSystem().setJob(target, 0);
+                JOB_MAIN_SYSTEM.setJob(target, 0);
             }
 
             case "getjob"-> {
                 if (!sender.hasPermission("mc42290.admin.job")) return true;
+                OfflinePlayer target;
                 if (args.length < 2 || (target = Bukkit.getOfflinePlayer(args[1])) == null) return true;
+                UtilSet.sendPrefixMessage(p, "§d§l" + target.getName() + "§a§lの職業は次の通りです");
+                UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(target).toString());
             }
 
             case "getlevel"-> {
                 UtilSet.sendPrefixMessage(p, "§1§l------- [JobLevel] -------");
                 for (String job_s : JobMainSystem.JOB.toStrings())
-                    UtilSet.sendPrefixMessage(p, "§a§l" + job_s + "§f§l -> §d§lLv" + JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getJobLv(p, job_s));
+                    if(!job_s.equals("NEET"))UtilSet.sendPrefixMessage(p, "§a§l" + job_s + "§f§l -> §d§lLv" + JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getJobLv(p, job_s));
                 UtilSet.sendPrefixMessage(p, "§6§lPlayerLv §f§l-> §d§l§nLv" + JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getPlayerLv(p));
             }
 
             case "check"-> {
-                if (target == null) target = p;
-                UtilSet.sendPrefixMessage(p, "§d§l" + target.getName() + "§a§lの職業は次の通りです");
-                UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(target).toString());
+                UtilSet.sendPrefixMessage(p, "§d§l" + p.getName() + "§a§lの職業は次の通りです");
+                UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(p).toString());
             }
 
         }
@@ -118,7 +119,7 @@ public class JobCommand implements CommandExecutor {
         public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
             switch (args.length){
                 case 1 -> {
-                    return sender.hasPermission("mc42290.admin.job") ? List.of("getticket", "setjob", "getjob", "check", "removejob", "getlevel") : List.of("check");
+                    return sender.hasPermission("mc42290.admin.job") ? List.of("getticket", "setjob", "getjob", "check", "removejob", "getlevel") : List.of("check","getlevel");
                 }
 
                 case 2-> {
