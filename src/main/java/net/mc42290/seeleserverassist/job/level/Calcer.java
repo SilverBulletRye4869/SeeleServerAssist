@@ -1,6 +1,7 @@
 package net.mc42290.seeleserverassist.job.level;
 
 
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -16,13 +17,14 @@ public class Calcer {
     private static final double RECEIVE_DAMAGE_EXPO = 0.5;
     private static final long RECEIVE_DAMAGE_MAX = Long.MAX_VALUE;
 
-    private static final double JOB_LV_EXPO = 0.8;
-    private static final double PLAYER_LV_EXPO = 0.6;
+    private static final double PLAYER_LV_EXPO = 0.7;
 
     static double bonusCoef = 1.0;
 
     public static long calcJobLv(long exp){
-        return (long)Math.pow(exp,JOB_LV_EXPO);  //近日改良
+        if(exp>0)UtilSet.broadcast(""+exp);
+        double log = Math.log(exp);
+        return (long)(Math.sqrt(exp)/(log * log + 1));  //近日改良
     }
 
     public static long calcPlayerLv(long[] jobLevels){
