@@ -1,9 +1,8 @@
 package net.mc42290.seeleserverassist.job;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import net.mc42290.seeleserverassist.SeeleServerAssist;
 import net.mc42290.seeleserverassist.Util.UtilSet;
-import net.mc42290.seeleserverassist.job.level.LevelMainSystem;
+import net.mc42290.seeleserverassist.job.level.Calcer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -98,10 +97,21 @@ public class JobCommand implements CommandExecutor {
             }
 
             case "getlevel"-> {
-                UtilSet.sendPrefixMessage(p, "§1§l------- [JobLevel] -------");
-                for (String job_s : JobMainSystem.JOB.toStrings())
-                    if(!job_s.equals("NEET"))UtilSet.sendPrefixMessage(p, "§a§l" + job_s + "§f§l -> §d§lLv" + JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getJobLv(p, job_s));
-                UtilSet.sendPrefixMessage(p, "§6§lPlayerLv §f§l-> §d§l§nLv" + JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getPlayerLv(p));
+                if(args.length<2) {
+                    UtilSet.sendPrefixMessage(p, "§1§l------- [JobLevel] -------");
+                    for (String job_s : JobMainSystem.JOB.toStrings())
+                        if (!job_s.equals("NEET"))
+                            UtilSet.sendPrefixMessage(p, "§a§l" + job_s + "§f§l -> §d§lLv" + JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getJobLv(p, job_s));
+                    UtilSet.sendPrefixMessage(p, "§6§lPlayerLv §f§l-> §d§l§nLv" + JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getPlayerLv(p));
+                }else{
+                    if(args[1].equals("NEET"))return true;
+                    if(!Arrays.asList(JobMainSystem.JOB.toStrings()).contains(args[1]))return true;
+                    long exp = JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getExp(p,args[1]);
+                    UtilSet.sendPrefixMessage(p,"§1§l------- ["+args[1]+"] -------");
+                    UtilSet.sendPrefixMessage(p,"§a§l現在の経験値: §d§l"+exp);
+                    UtilSet.sendPrefixMessage(p,"§a§l現在のレベル: §d§l"+ Calcer.calcJobLv(exp));
+                    UtilSet.sendPrefixMessage(p,"§a§l次のレベルまでに必要な経験値: §d§l"+Calcer.calcNeedExp(exp));
+                }
             }
 
             case "check"-> {
@@ -130,6 +140,11 @@ public class JobCommand implements CommandExecutor {
                                         .filter(g -> g.getName().matches("^" + args[1] + ".*$"))
                                         .map(e -> e.getName())
                                         .collect(Collectors.toList());
+                        }
+                        case "getlevel" ->{
+                            List<String> list = Arrays.asList(JobMainSystem.JOB.toStrings());
+                            list.remove("NEET");
+                            return list;
                         }
                     }
                 }
