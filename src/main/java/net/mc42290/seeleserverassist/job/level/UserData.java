@@ -5,13 +5,13 @@ import net.mc42290.seeleserverassist.SeeleServerAssist;
 import net.mc42290.seeleserverassist.job.JobMainSystem;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
 public class UserData {
-    private static final JavaPlugin plugin = SeeleServerAssist.getInstance();
     private static final String[] jobNames = JobMainSystem.JOB.toStrings();
+
+
 
     private final UUID UUID;
     private final Player P;
@@ -20,6 +20,7 @@ public class UserData {
     private double receiveDamageAmount = 0;
     private double healAmount = 0;
     private long bonusExp = 0;
+
 
     public UserData(Player p){
         UUID = p.getUniqueId();
@@ -71,7 +72,7 @@ public class UserData {
     }
 
     public void reset(){
-        attackDamageAmount = receiveDamageAmount = healAmount = 0;
+        attackDamageAmount = receiveDamageAmount = healAmount = bonusExp = 0;
         loginTime = System.currentTimeMillis();
     }
 

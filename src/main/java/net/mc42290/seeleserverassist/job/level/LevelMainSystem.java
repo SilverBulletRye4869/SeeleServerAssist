@@ -52,9 +52,16 @@ public class LevelMainSystem {
     public long getJobLv(UUID uuid,JobMainSystem.JOB job){return getJobLv(uuid,job.toString());}
     public long getJobLv(Player p,String job){return getJobLv(p.getUniqueId(),job);}
     public long getJobLv(UUID uuid,String job){
-        YamlConfiguration yml = CustomConfig.getYmlByID("userdata",uuid.toString());
-        return yml.getLong("data."+job+".lv");
+        YamlConfiguration yml =CustomConfig.getYmlByID("userdata",uuid.toString());
+        long exp = yml.getLong("data."+job+".exp",0);
+        long jobLv = Calcer.calcJobLv(exp);
+        return jobLv;
     }
+
+    public long getExp(Player p, JobMainSystem.JOB job){return getExp(p.getUniqueId(),job.toString());}
+    public long getExp(UUID uuid,JobMainSystem.JOB job){return getExp(uuid,job.toString());}
+    public long getExp(Player p,String job){return getExp(p.getUniqueId(),job);}
+    public long getExp(UUID uuid,String job){return CustomConfig.getYmlByID("userdata",uuid.toString()).getLong("data."+job+".exp",0);}
 
     private class listener implements Listener {
 

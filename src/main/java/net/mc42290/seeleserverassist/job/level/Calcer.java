@@ -22,9 +22,9 @@ public class Calcer {
     static double bonusCoef = 1.0;
 
     public static long calcJobLv(long exp){
-        if(exp>0)UtilSet.broadcast(""+exp);
-        double log = Math.log(exp);
-        return (long)(Math.sqrt(exp)/(log * log + 1));  //近日改良
+        if(exp<=0)return 0;
+        double log = Math.log10(exp);
+        return (long)(Math.sqrt(exp) / (log * log +1));
     }
 
     public static long calcPlayerLv(long[] jobLevels){
@@ -40,5 +40,31 @@ public class Calcer {
                     Math.min(RECEIVE_DAMAGE_COEF * Math.pow(receiveDamage,RECEIVE_DAMAGE_EXPO), RECEIVE_DAMAGE_MAX)
                 ) * bonusCoef + bonusExp
             ); //近日修正
+    }
+
+
+
+    private static final int MAX_LOOP_CNT = 300;
+    private static final double EPS = 1e-3;
+    public static long calcNextLvExp(long exp){
+        long nextLevel =calcJobLv(exp)+1;
+        double bottom = exp;
+        double top = Long.MAX_VALUE;
+        int loopCnt = 0;
+        while (top-bottom > EPS && loopCnt++ < MAX_LOOP_CNT){
+            double center = (bottom + top) / 2;
+            double log = Math.log10(center);
+            double centerExpLv = Math.sqrt(center)/(log * log + 1);
+            if(centerExpLv > nextLevel)top = center;
+            else if(centerExpLv<nextLevel)bottom = center;
+            else{
+                top = center;
+                break;
+            }
+        }
+        return (long)Math.ceil(top);
+    }
+    public static long calcNeedExp(long exp){
+        return calcNextLvExp(exp)-exp;
     }
 }
