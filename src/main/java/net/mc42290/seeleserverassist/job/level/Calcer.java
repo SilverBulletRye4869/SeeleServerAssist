@@ -46,7 +46,7 @@ public class Calcer {
 
     private static final int MAX_LOOP_CNT = 300;
     private static final double EPS = 1e-3;
-    public static long calcNeedExp(long exp){
+    public static long calcNextLvExp(long exp){
         long nextLevel =calcJobLv(exp)+1;
         double bottom = exp;
         double top = Long.MAX_VALUE;
@@ -62,6 +62,9 @@ public class Calcer {
                 break;
             }
         }
-        return ((long)Math.ceil(top)) - exp;
+        return (long)Math.ceil(top);
+    }
+    public static long calcNeedExp(long exp){
+        return calcNextLvExp(exp)-exp;
     }
 }
