@@ -2,6 +2,7 @@ package net.mc42290.seeleserverassist.job;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.mc42290.seeleserverassist.Util.UtilSet;
+import net.mc42290.seeleserverassist.job.level.UserData;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -118,7 +119,10 @@ public class JobChange {
                             p.closeInventory();
                         } else {
                             JobMainSystem.JOB job = confirmMenu.get(p);
+                            UserData userData = MAIN_SYSTEM.LEVEL_SYSTEM.getUserData(p);
+                            userData.save(true);
                             MAIN_SYSTEM.setJob(p, job);
+                            userData.reloadJob();
                             nbtItem.setInteger("jobchange", --available);
                             if (available > 0) p.getInventory().setItemInMainHand(nbtItem.getItem());
                             else p.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
