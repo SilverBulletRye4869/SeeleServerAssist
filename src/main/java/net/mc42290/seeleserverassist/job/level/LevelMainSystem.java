@@ -35,7 +35,7 @@ public class LevelMainSystem {
 
     public boolean save(Player p){
         if(!USER_DATA_MAP.containsKey(p))return false;
-        boolean res =  USER_DATA_MAP.get(p).save();
+        boolean res =  USER_DATA_MAP.get(p).save(true);
         USER_DATA_MAP.remove(p);
         return res;
     }
