@@ -113,6 +113,10 @@ public class JobMainSystem {
             }
             return strings;
         }
+
+        public static int size(){
+            return JOB.values().length;
+        }
     }
 
     public void playerJobRegisterOnMemory(Player p){
