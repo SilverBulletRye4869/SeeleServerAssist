@@ -28,6 +28,7 @@ public class CheckMatch implements Listener {
         else{return;}
 
         boolean jobMatch = true;
+        double lvBonus = 1.0;
         do {
             ItemStack item = p.getInventory().getItemInMainHand();
             if(item.getAmount() == 0)break;
@@ -35,8 +36,10 @@ public class CheckMatch implements Listener {
             if(!nbtItem.hasKey("job"))break;
             int jobNum = nbtItem.getInteger("job");
             jobMatch = MAIN_SYSTEM.isJobMatch(p,jobNum);
+            lvBonus += MAIN_SYSTEM.LEVEL_SYSTEM.getUserData(p).getJobLv(jobNum) / 100.0;
         }while (false);
-        if (!jobMatch)e.setDamage(Math.max(0.1*p.getAttackCooldown(),e.getDamage()*0.01));
+        if (jobMatch)e.setDamage(e.getDamage()*lvBonus);
+        else e.setDamage(Math.max(0.1*p.getAttackCooldown(),e.getDamage()*0.01));
         if(MAIN_SYSTEM.isNeet.test(p))e.setDamage(e.getDamage()/(Math.random()*8.0+2));
     }
 }
