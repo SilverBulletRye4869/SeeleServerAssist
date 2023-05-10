@@ -1,11 +1,5 @@
 package net.mc42290.seeleserverassist.job.level;
 
-
-import net.mc42290.seeleserverassist.Util.UtilSet;
-import org.bukkit.entity.Player;
-
-import java.util.UUID;
-
 public class Calcer {
     private static final double LOGIN_TIME_COEF = 2.0;
     private static final double LOGIN_TIME_EXPO = 1.0;
