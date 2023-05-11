@@ -14,6 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static net.mc42290.seeleserverassist.job.JobMainSystem.YML_PREFIX;
+
 public class LevelMainSystem {
 
     private static final JavaPlugin plugin = SeeleServerAssist.getInstance();
@@ -44,7 +46,7 @@ public class LevelMainSystem {
     public long getPlayerLv(UUID uuid){
         YamlConfiguration yml = CustomConfig.getYmlByID("userdata",uuid.toString());
         long[] jobLevels = new long[jobNames.length];
-        for(int i = 1;i<jobNames.length;i++)jobLevels[i-1] =yml.getLong("data."+jobNames[i]+".lv",0);
+        for(int i = 1;i<jobNames.length;i++)jobLevels[i-1] =yml.getLong(YML_PREFIX+"."+jobNames[i]+".lv",0);
         return Calcer.calcPlayerLv(jobLevels);
     }
 
@@ -53,7 +55,7 @@ public class LevelMainSystem {
     public long getJobLv(Player p,String job){return getJobLv(p.getUniqueId(),job);}
     public long getJobLv(UUID uuid,String job){
         YamlConfiguration yml =CustomConfig.getYmlByID("userdata",uuid.toString());
-        long exp = yml.getLong("data."+job+".exp",0);
+        long exp = yml.getLong(YML_PREFIX+"."+job+".exp",0);
         long jobLv = Calcer.calcJobLv(exp);
         return jobLv;
     }
@@ -61,7 +63,7 @@ public class LevelMainSystem {
     public long getExp(Player p, JobMainSystem.JOB job){return getExp(p.getUniqueId(),job.toString());}
     public long getExp(UUID uuid,JobMainSystem.JOB job){return getExp(uuid,job.toString());}
     public long getExp(Player p,String job){return getExp(p.getUniqueId(),job);}
-    public long getExp(UUID uuid,String job){return CustomConfig.getYmlByID("userdata",uuid.toString()).getLong("data."+job+".exp",0);}
+    public long getExp(UUID uuid,String job){return CustomConfig.getYmlByID("userdata",uuid.toString()).getLong(YML_PREFIX+"."+job+".exp",0);}
 
     private class listener implements Listener {
 

@@ -18,11 +18,14 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public class JobMainSystem {
+    public static final String YML_PREFIX = "job";
+
     private final JobChange JOB_CHANGE_SYSTEM;
     private final JavaPlugin plugin;
 
     public final LevelMainSystem LEVEL_SYSTEM;
     public final Predicate<Player> isNeet = p -> isJobMatch(p,JOB.NEET);
+
 
     public JobMainSystem(JavaPlugin plugin){
         this.plugin = plugin;
