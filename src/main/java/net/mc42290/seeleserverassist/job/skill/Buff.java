@@ -35,8 +35,8 @@ public class Buff {
     }
 
     public boolean setup(){
-        YamlConfiguration yml = CustomConfig.getYmlByID("admin/job","buff.yml");
-        if(yml==null)yml = CustomConfig.createYmlByID("admin/job","buff.yml");
+        YamlConfiguration yml = CustomConfig.getYmlByID("admin/job","buff");
+        if(yml==null)yml = CustomConfig.createYmlByID("admin/job","buff");
         if(yml==null)return false;
         for(String job : JobMainSystem.JOB.toStrings()){
             ConfigurationSection cs = yml.getConfigurationSection(job);
