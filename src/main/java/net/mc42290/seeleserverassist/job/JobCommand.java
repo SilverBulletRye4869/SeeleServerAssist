@@ -121,6 +121,14 @@ public class JobCommand implements CommandExecutor {
                 UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(p).toString());
             }
 
+            case "skillcheck" ->{
+                if(args.length<2){
+                    if(!Arrays.stream(JobMainSystem.JOB.toStrings()).toList().contains(args[1]))return true;
+                    JobMainSystem.JOB job = JobMainSystem.JOB.valueOf(args[1]);
+                    JOB_MAIN_SYSTEM.BUFF_GUI.open(p,job);
+                }
+            }
+
         }
         return true;
     }
@@ -129,6 +137,8 @@ public class JobCommand implements CommandExecutor {
 
         @Override
         public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+            if(!(sender instanceof Player))return null;
+            Player p = (Player) sender;
             switch (args.length){
                 case 1 -> {
                     return sender.hasPermission("mc42290.admin.job") ? List.of("getticket", "setjob", "getjob", "check", "removejob", "getlevel") : List.of("check","getlevel");
@@ -147,6 +157,12 @@ public class JobCommand implements CommandExecutor {
                             return Arrays.stream(JobMainSystem.JOB.toStrings())
                                     .filter(g -> g.matches("^" + args[1].toUpperCase() + ".*$"))
                                     .filter(g -> !g.matches("NEET"))
+                                    .collect(Collectors.toList());
+                        }
+                        case "skillcheck" ->{
+                            return Arrays.stream(JobMainSystem.JOB.values())
+                                    .filter(job -> JOB_MAIN_SYSTEM.isJobMatch(p,job.getNum()))
+                                    .map(job -> job.toString())
                                     .collect(Collectors.toList());
                         }
 

@@ -3,6 +3,7 @@ package net.mc42290.seeleserverassist.job;
 import net.mc42290.seeleserverassist.CustomConfig;
 import net.mc42290.seeleserverassist.job.level.LevelMainSystem;
 import net.mc42290.seeleserverassist.job.skill.Buff;
+import net.mc42290.seeleserverassist.job.skill.BuffGui;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -27,6 +28,7 @@ public class JobMainSystem {
     public final LevelMainSystem LEVEL_SYSTEM;
     public final Predicate<Player> isNeet = p -> isJobMatch(p,JOB.NEET);
     public final Buff BUFF;
+    public final BuffGui BUFF_GUI;
 
 
     public JobMainSystem(JavaPlugin plugin){
@@ -44,6 +46,7 @@ public class JobMainSystem {
         Bukkit.getOnlinePlayers().forEach(LEVEL_SYSTEM::startRecord);
 
         BUFF = new Buff(this);
+        BUFF_GUI = new BuffGui(this);
     }
 
 
