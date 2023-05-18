@@ -3,6 +3,7 @@ package net.mc42290.seeleserverassist.job.level;
 import net.mc42290.seeleserverassist.CustomConfig;
 import net.mc42290.seeleserverassist.SeeleServerAssist;
 import net.mc42290.seeleserverassist.job.JobMainSystem;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,9 +51,9 @@ public class LevelMainSystem {
         return Calcer.calcPlayerLv(jobLevels);
     }
 
-    public long getJobLv(Player p, JobMainSystem.JOB job){return getJobLv(p.getUniqueId(),job.toString());}
+    public long getJobLv(OfflinePlayer p, JobMainSystem.JOB job){return getJobLv(p.getUniqueId(),job.toString());}
     public long getJobLv(UUID uuid,JobMainSystem.JOB job){return getJobLv(uuid,job.toString());}
-    public long getJobLv(Player p,String job){return getJobLv(p.getUniqueId(),job);}
+    public long getJobLv(OfflinePlayer p,String job){return getJobLv(p.getUniqueId(),job);}
     public long getJobLv(UUID uuid,String job){
         YamlConfiguration yml =CustomConfig.getYmlByID("userdata",uuid.toString());
         long exp = yml.getLong(YML_PREFIX+"."+job+".exp",0);
@@ -60,9 +61,9 @@ public class LevelMainSystem {
         return jobLv;
     }
 
-    public long getExp(Player p, JobMainSystem.JOB job){return getExp(p.getUniqueId(),job.toString());}
+    public long getExp(OfflinePlayer p, JobMainSystem.JOB job){return getExp(p.getUniqueId(),job.toString());}
     public long getExp(UUID uuid,JobMainSystem.JOB job){return getExp(uuid,job.toString());}
-    public long getExp(Player p,String job){return getExp(p.getUniqueId(),job);}
+    public long getExp(OfflinePlayer p,String job){return getExp(p.getUniqueId(),job);}
     public long getExp(UUID uuid,String job){return CustomConfig.getYmlByID("userdata",uuid.toString()).getLong(YML_PREFIX+"."+job+".exp",0);}
 
     private class listener implements Listener {
