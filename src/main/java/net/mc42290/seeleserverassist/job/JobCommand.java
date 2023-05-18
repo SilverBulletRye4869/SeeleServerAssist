@@ -3,6 +3,7 @@ package net.mc42290.seeleserverassist.job;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.mc42290.seeleserverassist.Util.UtilSet;
 import net.mc42290.seeleserverassist.job.level.Calcer;
+import net.mc42290.seeleserverassist.job.level.UserData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -97,12 +98,26 @@ public class JobCommand implements CommandExecutor {
                 UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(target).toString());
             }
 
+            case "addexp","removeexp" ->{
+                if(args.length<3|| !args[2].matches("\\d+"))return true;
+                int exp = Integer.parseInt(args[2]);
+                Player target = Bukkit.getPlayer(args[1]);
+                if(target==null)return true;
+                UserData ud = JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getUserData(target);
+                ud.addBonusExp(args[0].equals("addexp") ? exp : -exp);
+                ud.apply();
+            }
+
+
             case "getlevel"-> {
+                OfflinePlayer target;
+                if(!p.hasPermission("mc42290.admin.job") || args.length<3)target=p;
+                else target=Bukkit.getOfflinePlayer(args[2]);
                 if(args.length<2) {
                     UtilSet.sendPrefixMessage(p, "§6§l------- [JobLevel] -------");
                     for (String job_s : JobMainSystem.JOB.toStrings())
                         if (!job_s.equals("NEET")) {
-                            long lv = JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getJobLv(p, job_s);
+                            long lv = JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getJobLv(target, job_s);
                             UtilSet.sendPrefixMessage(p, "§7§l" + job_s + " -> "+(lv>0 ? "§a§lLv" + lv : "§3§lLv0"));
                         }
                     UtilSet.sendPrefixMessage(p, "§7§lPlayerLv -> §e§l§nLv" + JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getPlayerLv(p));
@@ -178,6 +193,13 @@ public class JobCommand implements CommandExecutor {
                                         .map(e -> e.name())
                                         .collect(Collectors.toList());
 
+                        }
+
+                        case "getlevel" ->{
+                            if(sender.hasPermission("mc42290.admin.job"))
+                                return Bukkit.getOnlinePlayers().stream()
+                                        .filter(g->g.getName().matches("^" + args[2] + ".*$"))
+                                        .map(e->e.getName()).collect(Collectors.toList());
                         }
                     }
                 }
