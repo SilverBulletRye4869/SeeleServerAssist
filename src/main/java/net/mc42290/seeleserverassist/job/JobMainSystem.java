@@ -1,6 +1,7 @@
 package net.mc42290.seeleserverassist.job;
 
 import net.mc42290.seeleserverassist.CustomConfig;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import net.mc42290.seeleserverassist.job.level.LevelMainSystem;
 import net.mc42290.seeleserverassist.job.skill.Buff;
 import net.mc42290.seeleserverassist.job.skill.BuffGui;
@@ -20,7 +21,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public class JobMainSystem {
-    public static final String YML_PREFIX = "job";
+    public static final String YML_PREFIX = "record";
 
     private final JobChange JOB_CHANGE_SYSTEM;
     private final JavaPlugin plugin;
@@ -145,11 +146,18 @@ public class JobMainSystem {
 
     private class listener implements Listener {
         @EventHandler
-        public void onJoin(PlayerJoinEvent e){playerJobRegisterOnMemory(e.getPlayer());}
+        public void onJoin(PlayerJoinEvent e){
+            Player p = e.getPlayer();
+            playerJobRegisterOnMemory(p);
+            LEVEL_SYSTEM.startRecord(p);
+            BUFF.applyBuff(p);
+        }
 
         @EventHandler
         public void onQuit(PlayerQuitEvent e){
-            PLAYER_JOB.remove(e.getPlayer().getUniqueId().toString());
+            Player p = e.getPlayer();
+            LEVEL_SYSTEM.save(p);
+            PLAYER_JOB.remove(p.getUniqueId().toString());
         }
 
     }

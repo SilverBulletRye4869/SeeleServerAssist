@@ -24,7 +24,6 @@ public class LevelMainSystem {
     private final HashMap<Player,UserData> USER_DATA_MAP = new HashMap<>();
 
     public LevelMainSystem(){
-        plugin.getServer().getPluginManager().registerEvents(new listener(),plugin);
         new DataRecorder(this);
     }
 
@@ -66,17 +65,5 @@ public class LevelMainSystem {
     public long getExp(OfflinePlayer p,String job){return getExp(p.getUniqueId(),job);}
     public long getExp(UUID uuid,String job){return CustomConfig.getYmlByID("userdata",uuid.toString()).getLong(YML_PREFIX+"."+job+".exp",0);}
 
-    private class listener implements Listener {
 
-        @EventHandler
-        public void onJoin(PlayerJoinEvent e){
-            startRecord(e.getPlayer());
-        }
-
-        @EventHandler
-        public void onQuit(PlayerQuitEvent e){
-            //ymlに保存させる
-            save(e.getPlayer());
-        }
-    }
 }
