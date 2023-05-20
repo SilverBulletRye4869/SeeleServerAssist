@@ -132,8 +132,20 @@ public class JobCommand implements CommandExecutor {
             }
 
             case "check"-> {
-                UtilSet.sendPrefixMessage(p, "§d§l" + p.getName() + "§a§lの職業は次の通りです");
-                UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(p).toString());
+                if(args.length<2)return true;
+                switch (args[1]){
+                    case "job"-> {
+                        UtilSet.sendPrefixMessage(p, "§d§l" + p.getName() + "§a§lの職業は次の通りです");
+                        UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(p).toString());
+                    }
+                    case "buff"->{
+                        UtilSet.sendPrefixMessage(p,"§c与ダメージ増加 "+JOB_MAIN_SYSTEM.BUFF.BUFF_TABLE.get(p,"attack") +"%");
+                        UtilSet.sendPrefixMessage(p,"§c被ダメージ減少 "+JOB_MAIN_SYSTEM.BUFF.BUFF_TABLE.get(p,"resistance")+"%");
+                        UtilSet.sendPrefixMessage(p,"§c移動速度上昇 "+JOB_MAIN_SYSTEM.BUFF.BUFF_TABLE.get(p,"speed"));
+                        UtilSet.sendPrefixMessage(p,"§c最大HP増加 "+JOB_MAIN_SYSTEM.BUFF.BUFF_TABLE.get(p,"health"));
+
+                    }
+                }
             }
 
             case "skillcheck" ->{
@@ -156,12 +168,12 @@ public class JobCommand implements CommandExecutor {
             Player p = (Player) sender;
             switch (args.length){
                 case 1 -> {
-                    return sender.hasPermission("mc42290.admin.job") ? List.of("getticket", "setjob", "getjob", "check", "removejob", "getlevel") : List.of("check","getlevel");
+                    return sender.hasPermission("mc42290.admin.job") ? List.of("getticket", "setjob", "getjob", "check", "removejob", "getlevel","addexp","removeexp") : List.of("check","getlevel");
                 }
 
                 case 2-> {
                     switch (args[0]) {
-                        case "setjob", "getjob", "removejob"-> {
+                        case "setjob", "getjob", "removejob","addexp","removeexp"-> {
                             if (sender.hasPermission("mc42290.admin.job"))
                                 return Arrays.asList(Bukkit.getOfflinePlayers()).stream()
                                         .filter(g -> g.getName().matches("^" + args[1] + ".*$"))
@@ -180,7 +192,9 @@ public class JobCommand implements CommandExecutor {
                                     .map(job -> job.toString())
                                     .collect(Collectors.toList());
                         }
-
+                        case "check"-> {
+                            return List.of("job","buff");
+                        }
                     }
                 }
 
