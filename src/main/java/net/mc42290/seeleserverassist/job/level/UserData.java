@@ -2,6 +2,7 @@ package net.mc42290.seeleserverassist.job.level;
 
 import net.mc42290.seeleserverassist.CustomConfig;
 import net.mc42290.seeleserverassist.SeeleServerAssist;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import net.mc42290.seeleserverassist.job.JobMainSystem;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -17,7 +18,7 @@ public class UserData {
 
     private final UUID UUID;
     private final Player P;
-    private long loginTime;
+    private final long loginTime;
     private long lastApplyTime;
     private double attackDamageAmount = 0;
     private double attackDamageAmount_total = 0;
@@ -40,7 +41,6 @@ public class UserData {
             exp[i] = yml.getLong(YML_PREFIX+"."+jobNames[i]+".exp",0);
             lv[i] = yml.getLong(YML_PREFIX+"."+jobNames[i]+".lv",0);
         }
-        jobData = SeeleServerAssist.getJobSystem().getJob_c(UUID);
     }
 
     public void addAD(double amount){
@@ -65,16 +65,20 @@ public class UserData {
     public long getPlayTime(){return System.currentTimeMillis()- lastApplyTime;}
     public long getBonusExp(){return bonusExp;}
 
-    public void reloadJob(){
+    public boolean reloadJob(){
         jobData = SeeleServerAssist.getJobSystem().getJob_c(UUID);
+        return jobData!=null;
     }
     public long getJobLv(int jobNum){
         return (0 > jobNum ||jobNum>=lv.length) ? -1 : lv[jobNum];
     }
 
     public boolean apply(){
-        if(jobData==null)return false;
+        if(jobData==null){
+            if(!reloadJob())return false;
+        }
         Long exp = Calcer.calcExp(getPlayTime(),attackDamageAmount,receiveDamageAmount,bonusExp);
+        UtilSet.sendConsole(""+exp);
         for(int i = 0;i<jobData.length;i++){
             String jobName = jobNames[i];
             if(jobName.equals("NEET")||jobData[jobData.length - i - 1] == '0')continue;
@@ -91,19 +95,20 @@ public class UserData {
     public boolean save(boolean toApply){
         if(toApply)apply();
         YamlConfiguration yml = CustomConfig.getYmlByID("userdata",UUID.toString());
-        JobMainSystem jobSystem =  SeeleServerAssist.getJobSystem();
-        char[] jobData = jobSystem.getJob_c(UUID);
-        if(jobData==null)return false;
+        if(jobData==null){
+            if(!reloadJob())return false;
+        }
+        long playTime = System.currentTimeMillis() - loginTime;
         for(int i = 0;i<jobData.length;i++){
             String jobName = jobNames[i];
             if(jobName.equals("NEET")||jobData[jobData.length - i - 1] == '0')continue;
             yml.set(YML_PREFIX+"."+jobName+".attackDamageAmount",yml.getDouble(YML_PREFIX+"."+jobName+".attackDamageAmount",0)+attackDamageAmount_total);
             yml.set(YML_PREFIX+"."+jobName+".receiveDamageAmount",yml.getDouble(YML_PREFIX+"."+jobName+".receiveDamageAmount",0)+receiveDamageAmount_total);
-            yml.set(YML_PREFIX+"."+jobName+".loginTime",yml.getLong(YML_PREFIX+"."+jobName+".loginTime",0)+getPlayTime());
+            yml.set(YML_PREFIX+"."+jobName+".loginTime",yml.getLong(YML_PREFIX+"."+jobName+".loginTime",0)+playTime);
             yml.set(YML_PREFIX+"."+jobName+".exp",this.exp[i]);
             yml.set(YML_PREFIX+"."+jobName+".lv",this.lv[i]);
         }
-        yml.set(YML_PREFIX+".all.loginTime",yml.getLong(YML_PREFIX+".all.loginTime",0)+getPlayTime());
+        yml.set(YML_PREFIX+".all.loginTime",yml.getLong(YML_PREFIX+".all.loginTime",0)+playTime);
         attackDamageAmount_total = receiveDamageAmount_total = 0;
         reset();
         return CustomConfig.saveYmlByID("userdata",UUID.toString());
