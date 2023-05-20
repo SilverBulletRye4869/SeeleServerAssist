@@ -78,7 +78,6 @@ public class UserData {
             if(!reloadJob())return false;
         }
         Long exp = Calcer.calcExp(getPlayTime(),attackDamageAmount,receiveDamageAmount,bonusExp);
-        UtilSet.sendConsole(""+exp);
         for(int i = 0;i<jobData.length;i++){
             String jobName = jobNames[i];
             if(jobName.equals("NEET")||jobData[jobData.length - i - 1] == '0')continue;
