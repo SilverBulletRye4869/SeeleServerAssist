@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import net.mc42290.seeleserverassist.CustomConfig;
 import net.mc42290.seeleserverassist.SeeleServerAssist;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import net.mc42290.seeleserverassist.job.JobMainSystem;
 import net.mc42290.seeleserverassist.job.level.UserData;
 import org.bukkit.attribute.Attribute;
@@ -32,6 +33,7 @@ public class Buff {
     public Buff(JobMainSystem mainSystem){
         JOB_MAIN_SYSTEM = mainSystem;
         setup();
+
     }
 
     public boolean setup(){
@@ -41,7 +43,9 @@ public class Buff {
         for(String job : JobMainSystem.JOB.toStrings()){
             ConfigurationSection cs = yml.getConfigurationSection(job);
             if(cs==null)continue;
-            List<Integer> levels = cs.getKeys(false).stream().map(Integer::parseInt).collect(Collectors.toList());
+            List<Integer> levels = cs.getKeys(false).stream()
+                    .filter(g-> g.matches("\\d+"))
+                    .map(Integer::parseInt).collect(Collectors.toList());
             Collections.sort(levels);
             double attack=0,resistance=0,speed=0,health=0;
             for(int lv : levels){
@@ -54,6 +58,7 @@ public class Buff {
                 health+=cs.getDouble(lv+".health_buff",0);
                 HEALTH_BUFF.put(job,lv,health);
             }
+
         }
         return true;
     }
@@ -79,7 +84,7 @@ public class Buff {
         return 0.0;
     }
 
-    private void applyBuff(Player p){
+    public void applyBuff(Player p){
         Set<JobMainSystem.JOB> jobs = JOB_MAIN_SYSTEM.getJob(p.getUniqueId());
         UserData data = JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getUserData(p);
 
@@ -91,9 +96,11 @@ public class Buff {
             speed += getSpeedBuff(job.toString(),lv);
             health += getHealthBuff(job.toString(),lv);
         }
-
+        UtilSet.sendConsole(attack+"-"+resistance+"-"+speed+"-"+health);
         BUFF_TABLE.put(p,"attack",attack);
         BUFF_TABLE.put(p,"resistance",resistance);
+        BUFF_TABLE.put(p,"speed",speed);
+        BUFF_TABLE.put(p,"health",health);
         p.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(p.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue() + speed);
         p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() + health);
     }
