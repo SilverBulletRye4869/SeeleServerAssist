@@ -72,6 +72,7 @@ public final class SeeleServerAssist extends JavaPlugin {
     private boolean folderSetup(){
         try{
             Files.createDirectories(Paths.get(this.getDataFolder()+"/data/userdata"));
+            Files.createDirectories(Paths.get(this.getDataFolder()+"/data/admin/job"));
             Files.createDirectories(Paths.get(this.getDataFolder()+"/log"));
         }catch (IOException e){
             UtilSet.sendConsole("dataフォルダ又はlogフォルダの作成に失敗しました", UtilSet.MessageType.ERROR);

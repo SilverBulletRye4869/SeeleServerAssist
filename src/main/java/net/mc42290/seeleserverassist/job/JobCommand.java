@@ -3,6 +3,7 @@ package net.mc42290.seeleserverassist.job;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.mc42290.seeleserverassist.Util.UtilSet;
 import net.mc42290.seeleserverassist.job.level.Calcer;
+import net.mc42290.seeleserverassist.job.level.UserData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -97,12 +98,26 @@ public class JobCommand implements CommandExecutor {
                 UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(target).toString());
             }
 
+            case "addexp","removeexp" ->{
+                if(args.length<3|| !args[2].matches("\\d+"))return true;
+                int exp = Integer.parseInt(args[2]);
+                Player target = Bukkit.getPlayer(args[1]);
+                if(target==null)return true;
+                UserData ud = JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getUserData(target);
+                ud.addBonusExp(args[0].equals("addexp") ? exp : -exp);
+                ud.apply();
+            }
+
+
             case "getlevel"-> {
+                OfflinePlayer target;
+                if(!p.hasPermission("mc42290.admin.job") || args.length<3)target=p;
+                else target=Bukkit.getOfflinePlayer(args[2]);
                 if(args.length<2) {
                     UtilSet.sendPrefixMessage(p, "§6§l------- [JobLevel] -------");
                     for (String job_s : JobMainSystem.JOB.toStrings())
                         if (!job_s.equals("NEET")) {
-                            long lv = JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getJobLv(p, job_s);
+                            long lv = JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getJobLv(target, job_s);
                             UtilSet.sendPrefixMessage(p, "§7§l" + job_s + " -> "+(lv>0 ? "§a§lLv" + lv : "§3§lLv0"));
                         }
                     UtilSet.sendPrefixMessage(p, "§7§lPlayerLv -> §e§l§nLv" + JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getPlayerLv(p));
@@ -117,8 +132,28 @@ public class JobCommand implements CommandExecutor {
             }
 
             case "check"-> {
-                UtilSet.sendPrefixMessage(p, "§d§l" + p.getName() + "§a§lの職業は次の通りです");
-                UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(p).toString());
+                if(args.length<2)return true;
+                switch (args[1]){
+                    case "job"-> {
+                        UtilSet.sendPrefixMessage(p, "§d§l" + p.getName() + "§a§lの職業は次の通りです");
+                        UtilSet.sendPrefixMessage(p, JOB_MAIN_SYSTEM.getJob(p).toString());
+                    }
+                    case "buff"->{
+                        UtilSet.sendPrefixMessage(p,"§c与ダメージ増加 "+JOB_MAIN_SYSTEM.BUFF.BUFF_TABLE.get(p,"attack") +"%");
+                        UtilSet.sendPrefixMessage(p,"§c被ダメージ減少 "+JOB_MAIN_SYSTEM.BUFF.BUFF_TABLE.get(p,"resistance")+"%");
+                        UtilSet.sendPrefixMessage(p,"§c移動速度上昇 "+JOB_MAIN_SYSTEM.BUFF.BUFF_TABLE.get(p,"speed"));
+                        UtilSet.sendPrefixMessage(p,"§c最大HP増加 "+JOB_MAIN_SYSTEM.BUFF.BUFF_TABLE.get(p,"health"));
+
+                    }
+                }
+            }
+
+            case "skillcheck" ->{
+                if(args.length<2){
+                    if(!Arrays.stream(JobMainSystem.JOB.toStrings()).toList().contains(args[1]))return true;
+                    JobMainSystem.JOB job = JobMainSystem.JOB.valueOf(args[1]);
+                    JOB_MAIN_SYSTEM.BUFF_GUI.open(p,job);
+                }
             }
 
         }
@@ -129,14 +164,16 @@ public class JobCommand implements CommandExecutor {
 
         @Override
         public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+            if(!(sender instanceof Player))return null;
+            Player p = (Player) sender;
             switch (args.length){
                 case 1 -> {
-                    return sender.hasPermission("mc42290.admin.job") ? List.of("getticket", "setjob", "getjob", "check", "removejob", "getlevel") : List.of("check","getlevel");
+                    return sender.hasPermission("mc42290.admin.job") ? List.of("getticket", "setjob", "getjob", "check", "removejob", "getlevel","addexp","removeexp") : List.of("check","getlevel");
                 }
 
                 case 2-> {
                     switch (args[0]) {
-                        case "setjob", "getjob", "removejob"-> {
+                        case "setjob", "getjob", "removejob","addexp","removeexp"-> {
                             if (sender.hasPermission("mc42290.admin.job"))
                                 return Arrays.asList(Bukkit.getOfflinePlayers()).stream()
                                         .filter(g -> g.getName().matches("^" + args[1] + ".*$"))
@@ -149,7 +186,15 @@ public class JobCommand implements CommandExecutor {
                                     .filter(g -> !g.matches("NEET"))
                                     .collect(Collectors.toList());
                         }
-
+                        case "skillcheck" ->{
+                            return Arrays.stream(JobMainSystem.JOB.values())
+                                    .filter(job -> JOB_MAIN_SYSTEM.isJobMatch(p,job.getNum()))
+                                    .map(job -> job.toString())
+                                    .collect(Collectors.toList());
+                        }
+                        case "check"-> {
+                            return List.of("job","buff");
+                        }
                     }
                 }
 
@@ -162,6 +207,13 @@ public class JobCommand implements CommandExecutor {
                                         .map(e -> e.name())
                                         .collect(Collectors.toList());
 
+                        }
+
+                        case "getlevel" ->{
+                            if(sender.hasPermission("mc42290.admin.job"))
+                                return Bukkit.getOnlinePlayers().stream()
+                                        .filter(g->g.getName().matches("^" + args[2] + ".*$"))
+                                        .map(e->e.getName()).collect(Collectors.toList());
                         }
                     }
                 }

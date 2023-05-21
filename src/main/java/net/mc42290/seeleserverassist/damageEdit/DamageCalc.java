@@ -1,5 +1,6 @@
 package net.mc42290.seeleserverassist.damageEdit;
 
+import net.mc42290.seeleserverassist.SeeleServerAssist;
 import net.mc42290.seeleserverassist.Util.PlayerKill;
 import net.mc42290.seeleserverassist.Util.UtilSet;
 import org.bukkit.Bukkit;
@@ -75,6 +76,11 @@ public class DamageCalc implements Listener {
         if(resistancePotion!=null) {
             int resistanceLv = resistancePotion.getAmplifier();
             damage *= 1.0 - 0.04 * resistanceLv * resistanceLv;
+        }
+
+        if(victim instanceof Player && SeeleServerAssist.getJobSystem().BUFF.BUFF_TABLE.contains(victim,"resistance")){
+            double resistanceAmount = SeeleServerAssist.getJobSystem().BUFF.BUFF_TABLE.get(victim,"resistance");
+            damage*=1.0 - (resistanceAmount / 100.0);
         }
 
         if(victim.getHealth() - damage> 0){

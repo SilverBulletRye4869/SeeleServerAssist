@@ -1,7 +1,10 @@
 package net.mc42290.seeleserverassist.job;
 
 import net.mc42290.seeleserverassist.CustomConfig;
+import net.mc42290.seeleserverassist.Util.UtilSet;
 import net.mc42290.seeleserverassist.job.level.LevelMainSystem;
+import net.mc42290.seeleserverassist.job.skill.Buff;
+import net.mc42290.seeleserverassist.job.skill.BuffGui;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -18,11 +21,16 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public class JobMainSystem {
+    public static final String YML_PREFIX = "record";
+
     private final JobChange JOB_CHANGE_SYSTEM;
     private final JavaPlugin plugin;
 
     public final LevelMainSystem LEVEL_SYSTEM;
     public final Predicate<Player> isNeet = p -> isJobMatch(p,JOB.NEET);
+    public final Buff BUFF;
+    public final BuffGui BUFF_GUI;
+
 
     public JobMainSystem(JavaPlugin plugin){
         this.plugin = plugin;
@@ -37,6 +45,9 @@ public class JobMainSystem {
 
         LEVEL_SYSTEM = new LevelMainSystem();
         Bukkit.getOnlinePlayers().forEach(LEVEL_SYSTEM::startRecord);
+
+        BUFF = new Buff(this);
+        BUFF_GUI = new BuffGui(this);
     }
 
 
@@ -113,6 +124,10 @@ public class JobMainSystem {
             }
             return strings;
         }
+
+        public static int size(){
+            return JOB.values().length;
+        }
     }
 
     public void playerJobRegisterOnMemory(Player p){
@@ -131,11 +146,18 @@ public class JobMainSystem {
 
     private class listener implements Listener {
         @EventHandler
-        public void onJoin(PlayerJoinEvent e){playerJobRegisterOnMemory(e.getPlayer());}
+        public void onJoin(PlayerJoinEvent e){
+            Player p = e.getPlayer();
+            playerJobRegisterOnMemory(p);
+            LEVEL_SYSTEM.startRecord(p);
+            BUFF.applyBuff(p);
+        }
 
         @EventHandler
         public void onQuit(PlayerQuitEvent e){
-            PLAYER_JOB.remove(e.getPlayer().getUniqueId().toString());
+            Player p = e.getPlayer();
+            LEVEL_SYSTEM.save(p);
+            PLAYER_JOB.remove(p.getUniqueId().toString());
         }
 
     }
