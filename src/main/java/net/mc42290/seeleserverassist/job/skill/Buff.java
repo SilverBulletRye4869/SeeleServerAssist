@@ -90,13 +90,12 @@ public class Buff {
 
         double attack=0,resistance=0,speed=0,health=0;
         for(JobMainSystem.JOB job : jobs) {
-            int lv = (int) data.getJobLv(job.getNum());
+            int lv = (int) data.getJobLv(job.getNum()-1);
             attack += getAttackBuff(job.toString(), lv);
             resistance += getResistanceBuff(job.toString(), lv);
             speed += getSpeedBuff(job.toString(),lv);
             health += getHealthBuff(job.toString(),lv);
         }
-        UtilSet.sendConsole(attack+"-"+resistance+"-"+speed+"-"+health);
         BUFF_TABLE.put(p,"attack",attack);
         BUFF_TABLE.put(p,"resistance",resistance);
         BUFF_TABLE.put(p,"speed",speed);
