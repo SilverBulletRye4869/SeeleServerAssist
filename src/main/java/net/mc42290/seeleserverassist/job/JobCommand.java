@@ -149,11 +149,9 @@ public class JobCommand implements CommandExecutor {
             }
 
             case "skillcheck" ->{
-                if(args.length<2){
-                    if(!Arrays.stream(JobMainSystem.JOB.toStrings()).toList().contains(args[1]))return true;
-                    JobMainSystem.JOB job = JobMainSystem.JOB.valueOf(args[1]);
-                    JOB_MAIN_SYSTEM.BUFF_GUI.open(p,job);
-                }
+                if(args.length<2 || !Arrays.stream(JobMainSystem.JOB.toStrings()).toList().contains(args[1]))return true;
+                JobMainSystem.JOB job = JobMainSystem.JOB.valueOf(args[1]);
+                JOB_MAIN_SYSTEM.BUFF_GUI.open(p,job);
             }
 
         }
@@ -168,7 +166,7 @@ public class JobCommand implements CommandExecutor {
             Player p = (Player) sender;
             switch (args.length){
                 case 1 -> {
-                    return sender.hasPermission("mc42290.admin.job") ? List.of("getticket", "setjob", "getjob", "check", "removejob", "getlevel","addexp","removeexp") : List.of("check","getlevel");
+                    return sender.hasPermission("mc42290.admin.job") ? List.of("getticket", "setjob", "getjob", "check", "removejob", "getlevel","addexp","removeexp","skillcheck") : List.of("check","getlevel","skillcheck");
                 }
 
                 case 2-> {
