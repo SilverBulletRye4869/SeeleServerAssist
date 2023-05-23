@@ -36,8 +36,9 @@ public class BuffGui {
         YamlConfiguration yml = CustomConfig.getYmlByID("admin/job","buff");
         ConfigurationSection cs =  yml.getConfigurationSection(job.toString());
         if(cs==null)return;
-        int row = (cs.getKeys(false).size() + 8)/9;
+        int row = ((cs.getKeys(false).size() + 8)/9)*9;
         Inventory inv = Bukkit.createInventory(p,row, UtilSet.PREFIX+"§c§lバフリスト");
+        p.openInventory(inv);
         Bukkit.getScheduler().runTaskAsynchronously(plugin,()->{
             int slot = 0;
             long lv = JOB_MAIN_SYSTEM.LEVEL_SYSTEM.getJobLv(p,job);
