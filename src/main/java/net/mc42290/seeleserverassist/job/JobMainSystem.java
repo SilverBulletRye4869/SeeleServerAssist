@@ -47,6 +47,7 @@ public class JobMainSystem {
         Bukkit.getOnlinePlayers().forEach(LEVEL_SYSTEM::startRecord);
 
         BUFF = new Buff(this);
+        Bukkit.getOnlinePlayers().forEach(BUFF::applyBuff);
         BUFF_GUI = new BuffGui(this);
     }
 
