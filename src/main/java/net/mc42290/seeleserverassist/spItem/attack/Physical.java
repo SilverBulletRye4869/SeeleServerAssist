@@ -99,8 +99,9 @@ public class Physical implements Listener {
         cooltime.add("interact_"+p);
         Bukkit.getScheduler().runTaskLater(plugin,()->cooltime.remove("interact_"+p),1);  //2回は知らないようにするやつ
 
-
-        if (new NBTItem(p.getInventory().getItemInMainHand()).hasKey(NBT_KEY + "_type") && ChanceOf(getNBT_lf(NBT_KEY + "_chance", p, EquipmentSlot.HAND, 100))) {
+        ItemStack item = p.getInventory().getItemInMainHand();
+        if(item == null || item.getType().isAir() || item.getAmount() == 0)return;
+        if (new NBTItem(item).hasKey(NBT_KEY + "_type") && ChanceOf(getNBT_lf(NBT_KEY + "_chance", p, EquipmentSlot.HAND, 100))) {
             switch (getNBT_s(NBT_KEY + "_type", e.getPlayer(), EquipmentSlot.HAND, "")) {
                 case "edReach":
                     double reach = getNBT_lf(NBT_KEY+"_amount", p, EquipmentSlot.HAND, 6);
